@@ -1,12 +1,14 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Spinner from "../components/Spinner";
+import CustomerDashboard from "../components/dashboard/CustomerDashboard";
+import ResearcherDashboard from "../components/dashboard/ResearcherDashboard";
+import SponsorDashboard from "../components/dashboard/SponsorDashboard";
 import { useAuth } from "../hooks/useAuth";
 import { getAccountRoleLabel } from "../lib/accounts";
 
 function CabinetPage() {
-  const { user, loading, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -37,31 +39,22 @@ function CabinetPage() {
     );
   }
 
-  async function handleLogout() {
-    await logout();
-    navigate("/");
-  }
-
   return (
-    <section className="mx-auto max-w-2xl">
-      <h1 className="text-4xl font-black tracking-tight">Кабинет</h1>
+    <section>
+      <div>
+        <h1 className="text-4xl font-black tracking-tight">Кабинет</h1>
+        <p className="mt-2 text-sm text-stone-600">
+          {user.name} · {user.email}
+        </p>
+        <span className="mt-3 inline-flex rounded-full bg-green-100 px-2.5 py-1 text-[11px] shadow-sm font-bold uppercase tracking-wide text-green-800">
+          {getAccountRoleLabel(user.role)}
+        </span>
+      </div>
 
-      <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-green-800">
-              {getAccountRoleLabel(user.role)}
-            </p>
-            <h2 className="mt-2 text-2xl font-bold text-stone-950">
-              {user.name}
-            </h2>
-            <p className="mt-1 text-sm text-stone-500">{user.email}</p>
-          </div>
-
-          <Button variant="secondary" onClick={() => void handleLogout()}>
-            Выйти
-          </Button>
-        </div>
+      <div className="mt-10">
+        {user.role === "CUSTOMER" && <CustomerDashboard />}
+        {user.role === "SPONSOR" && <SponsorDashboard />}
+        {user.role === "RESEARCHER" && <ResearcherDashboard />}
       </div>
     </section>
   );

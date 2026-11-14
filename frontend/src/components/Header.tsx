@@ -72,7 +72,7 @@ function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-6 max-lg:ml-auto">
+        <div className="flex items-center gap-3 max-lg:ml-auto">
           {!loading &&
             (user ? (
               <>
@@ -85,7 +85,7 @@ function Header() {
                 <IconButton
                   label="Выйти"
                   onClick={() => void handleLogout()}
-                  className="text-stone-500"
+                  className="text-stone-950"
                 >
                   <LogOut className="size-4" aria-hidden="true" />
                 </IconButton>
@@ -98,7 +98,7 @@ function Header() {
                 >
                   Войти
                 </Link>
-                <Button asChild>
+                <Button className="ml-3" asChild>
                   <Link to="/register">
                     Регистрация
                     <ArrowRight size={16} strokeWidth={3} />

@@ -104,3 +104,53 @@ export interface RegisterInput {
   company?: string;
   team?: TeamDraft;
 }
+
+
+export interface ContributionView {
+  id: string;
+  projectId: string;
+  userId: string;
+  amountKopecks: number;
+  status: string;
+  createdAt: string;
+  version: number;
+}
+
+export interface Rank {
+  name: string;
+  thresholdKopecks: number;
+}
+
+export interface Impact {
+  funding: FundingSummary;
+  rank: Rank;
+  nextRank: Rank | null;
+  achievements: string[];
+}
+
+export interface OrderStageView {
+  id: string;
+  orderId: string;
+  position: number;
+  title: string;
+  result: string;
+  acceptance: string;
+  weeks: number;
+  budgetKopecks: number;
+  status: string;
+  currentReportId?: string | null;
+  version: number;
+}
+
+export interface OrderView {
+  id: string;
+  requestId: string;
+  proposalId: string;
+  customerId: string;
+  organizationId: string;
+  title: string;
+  status: string;
+  version: number;
+  createdAt: string;
+  stages: OrderStageView[];
+}
