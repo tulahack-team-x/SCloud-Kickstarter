@@ -9,7 +9,7 @@ function AppLayout() {
   return (
     <div className="min-h-screen bg-stone-100 font-sans text-stone-900">
       <Header />
-      <main className="mx-auto max-w-[1560px] px-8 py-20 max-lg:px-5 max-lg:py-14">
+      <main className="mx-auto max-w-[1560px] px-6 py-16 max-lg:px-5 max-lg:py-14">
         <Outlet />
       </main>
     </div>
@@ -19,7 +19,9 @@ function AppLayout() {
 function NotFoundPage() {
   return (
     <section>
-      <h1 className="text-4xl font-black tracking-tight">Страница не найдена</h1>
+      <h1 className="text-4xl font-black tracking-tight">
+        Страница не найдена
+      </h1>
     </section>
   );
 }
