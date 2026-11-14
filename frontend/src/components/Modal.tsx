@@ -43,9 +43,9 @@ function Modal({ open, onClose, title, description, children }: ModalProps) {
       onClick={(event) => {
         if (event.target === ref.current) onClose();
       }}
-      className="m-auto max-h-[90vh] w-[min(92vw,42rem)] overflow-y-auto rounded-2xl border border-stone-200 bg-white p-0 text-stone-900 shadow-xl backdrop:bg-stone-950/40"
+      className="modal-panel m-auto max-h-[90vh] w-[min(92vw,42rem)] overflow-y-auto rounded-2xl border border-stone-200 bg-white p-0 text-stone-900 shadow-xl backdrop:bg-stone-950/40"
     >
-      <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-stone-100 bg-white px-6 py-5">
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-stone-100 bg-white pl-6 pr-4 py-5">
         <div>
           <h2 id={titleId} className="text-xl font-bold text-stone-950">
             {title}
