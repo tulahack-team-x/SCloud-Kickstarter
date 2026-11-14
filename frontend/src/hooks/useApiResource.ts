@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { apiFetch, getApiErrorMessage } from "../lib/api";
 
-export function useApiResource<T>(path: string) {
+export function useApiResource<T>(path: string | null) {
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [requestId, setRequestId] = useState(0);
 
   useEffect(() => {
+    if (!path) return;
+
+    const requestPath = path;
     let cancelled = false;
 
     async function load() {
       try {
-        const result = await apiFetch<T>(path);
+        const result = await apiFetch<T>(requestPath);
 
         if (!cancelled) {
           setData(result);
@@ -20,13 +22,7 @@ export function useApiResource<T>(path: string) {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(
-            getApiErrorMessage(err, "Не удалось загрузить данные кабинета"),
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
+          setError(getApiErrorMessage(err, "Не удалось загрузить данные"));
         }
       }
     }
@@ -39,10 +35,12 @@ export function useApiResource<T>(path: string) {
   }, [path, requestId]);
 
   function reload() {
-    setLoading(true);
+    setData(null);
     setError(null);
     setRequestId((current) => current + 1);
   }
+
+  const loading = path !== null && data === null && error === null;
 
   return { data, loading, error, reload };
 }

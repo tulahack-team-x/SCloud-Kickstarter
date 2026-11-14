@@ -154,3 +154,25 @@ export interface OrderView {
   createdAt: string;
   stages: OrderStageView[];
 }
+
+
+export interface ProjectUpdateView {
+  id: string;
+  projectId: string;
+  stageId: string;
+  title: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+export interface ReviewView {
+  id: string;
+  orderId: string;
+  authorId: string;
+  subjectId: string;
+  subjectType: string;
+  rating: number;
+  text: string;
+  createdAt: string;
+}
