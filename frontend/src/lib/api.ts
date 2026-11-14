@@ -98,3 +98,26 @@ export async function apiFetch<T>(
 
   return (await response.json()) as T;
 }
+
+
+export function getApiErrorMessage(
+  error: unknown,
+  fallback: string,
+): string {
+  if (error instanceof ApiError) {
+    const payload = error.payload;
+
+    if (
+      payload &&
+      typeof payload === "object" &&
+      "message" in payload &&
+      typeof payload.message === "string"
+    ) {
+      return payload.message;
+    }
+
+    return error.message;
+  }
+
+  return error instanceof Error ? error.message : fallback;
+}

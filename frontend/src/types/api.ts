@@ -64,3 +64,43 @@ export interface OrganizationView {
   version: number;
   members: MemberView[];
 }
+
+
+export type AccountRole = "CUSTOMER" | "SPONSOR" | "RESEARCHER";
+
+export interface AccountView {
+  id: string;
+  name: string;
+  email: string;
+  role: AccountRole;
+}
+
+export interface Profile {
+  account: AccountView;
+  organizations: OrganizationView[];
+}
+
+export interface TeamMemberDraft {
+  name: string;
+  position: string;
+}
+
+export interface TeamDraft {
+  name: string;
+  institution?: string;
+  city?: string;
+  direction: string;
+  description: string;
+  skills?: string;
+  equipment?: string;
+  members?: TeamMemberDraft[];
+}
+
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+  role: AccountRole;
+  company?: string;
+  team?: TeamDraft;
+}

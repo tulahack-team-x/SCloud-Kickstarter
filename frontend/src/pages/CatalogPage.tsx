@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Search, X } from "lucide-react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useState } from "react";
 import Button from "../components/Button";
 import ProjectCard from "../components/ProjectCard";
 import Spinner from "../components/Spinner";
@@ -22,24 +22,17 @@ function CatalogPage() {
 
   const deferredQuery = useDeferredValue(query);
 
-  const organizationNames = useMemo(
-    () => new Map(organizations.map((org) => [org.id, org.name])),
-    [organizations],
+  const organizationNames = new Map(
+    organizations.map((org) => [org.id, org.name]),
   );
-
-  const categories = useMemo(() => getCategories(items), [items]);
-
-  const filtered = useMemo(
-    () =>
-      filterProjects({
-        items,
-        organizations: organizationNames,
-        query: deferredQuery,
-        category,
-        sort,
-      }),
-    [items, organizationNames, deferredQuery, category, sort],
-  );
+  const categories = getCategories(items);
+  const filtered = filterProjects({
+    items,
+    organizations: organizationNames,
+    query: deferredQuery,
+    category,
+    sort,
+  });
 
   const hasFilters =
     query.trim() !== "" || category !== ALL_CATEGORIES || sort !== "newest";
@@ -81,6 +74,18 @@ function CatalogPage() {
               </button>
             )}
           </label>
+
+          <select
+            value={sort}
+            onChange={(event) => setSort(event.target.value as SortOption)}
+            className="focus-ring rounded-xl border border-stone-200 bg-white px-3.5 py-3 text-sm font-semibold text-stone-900 transition"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -110,20 +115,6 @@ function CatalogPage() {
               Сбросить
             </button>
           )}
-
-          <span className="flex-1"></span>
-
-          <select
-            value={sort}
-            onChange={(event) => setSort(event.target.value as SortOption)}
-            className="focus-ring rounded-xl border border-stone-200 bg-white px-3.5 py-3 text-sm font-semibold text-stone-900 transition"
-          >
-            {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 

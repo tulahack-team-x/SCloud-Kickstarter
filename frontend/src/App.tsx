@@ -3,6 +3,8 @@ import Header from "./components/Header";
 import CatalogPage from "./pages/CatalogPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
 import OrganizationPage from "./pages/OrganizationPage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 import ProjectPage from "./pages/ProjectPage";
 import CabinetPage from "./pages/CabinetPage";
 
@@ -36,6 +38,8 @@ function App() {
         <Route path="organizations" element={<OrganizationsPage />} />
         <Route path="organizations/:id" element={<OrganizationPage />} />
         <Route path="cabinet" element={<CabinetPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="login" element={<LoginPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

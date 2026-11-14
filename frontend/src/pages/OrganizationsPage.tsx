@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Search, X } from "lucide-react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useState } from "react";
 import Button from "../components/Button";
 import OrganizationCard from "../components/OrganizationCard";
 import Spinner from "../components/Spinner";
@@ -17,35 +17,29 @@ function OrganizationsPage() {
 
   const deferredQuery = useDeferredValue(query);
 
-  const typeOptions = useMemo(() => {
-    const types = new Map<string, string>();
+  const types = new Map<string, string>();
+  organizations.forEach(({ organization }) => {
+    types.set(organization.type, getOrganizationTypeLabel(organization.type));
+  });
 
-    organizations.forEach(({ organization }) => {
-      types.set(organization.type, getOrganizationTypeLabel(organization.type));
-    });
+  const typeOptions = [
+    { value: ALL_TYPES, label: ALL_TYPES },
+    ...Array.from(types, ([value, label]) => ({ value, label })),
+  ];
 
-    return [
-      { value: ALL_TYPES, label: ALL_TYPES },
-      ...Array.from(types, ([value, label]) => ({ value, label })),
-    ];
-  }, [organizations]);
+  const search = deferredQuery.trim().toLocaleLowerCase("ru");
+  const filtered = organizations.filter(({ organization, projects }) => {
+    const matchesType = type === ALL_TYPES || organization.type === type;
+    const projectTitles = projects
+      .map(({ project }) => project.title)
+      .join(" ");
+    const haystack =
+      `${organization.name} ${organization.direction ?? ""} ${organization.institution ?? ""} ${organization.city ?? ""} ${organization.description ?? ""} ${projectTitles}`.toLocaleLowerCase(
+        "ru",
+      );
 
-  const filtered = useMemo(() => {
-    const search = deferredQuery.trim().toLocaleLowerCase("ru");
-
-    return organizations.filter(({ organization, projects }) => {
-      const matchesType = type === ALL_TYPES || organization.type === type;
-      const projectTitles = projects
-        .map(({ project }) => project.title)
-        .join(" ");
-      const haystack =
-        `${organization.name} ${organization.direction ?? ""} ${organization.institution ?? ""} ${organization.city ?? ""} ${organization.description ?? ""} ${projectTitles}`.toLocaleLowerCase(
-          "ru",
-        );
-
-      return matchesType && (!search || haystack.includes(search));
-    });
-  }, [organizations, deferredQuery, type]);
+    return matchesType && (!search || haystack.includes(search));
+  });
 
   const hasFilters = query.trim() !== "" || type !== ALL_TYPES;
 
@@ -58,12 +52,6 @@ function OrganizationsPage() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <h1 className="text-4xl font-black tracking-tight">Организации</h1>
-
-        {!loading && !error && (
-          <p className="text-sm text-stone-500">
-            Найдено {filtered.length} из {organizations.length}
-          </p>
-        )}
       </div>
 
       <div className="mt-10 space-y-5">
@@ -143,19 +131,22 @@ function OrganizationsPage() {
         </div>
       )}
 
-      {!loading && !error && organizations.length > 0 && filtered.length === 0 && (
-        <div className="mt-12 rounded-2xl border border-stone-200 bg-white p-10 text-center">
-          <p className="font-bold text-stone-900">Ничего не найдено</p>
-          <p className="mt-1 text-sm text-stone-500">
-            Попробуйте изменить запрос или тип организации.
-          </p>
-          <div className="mt-4 flex justify-center">
-            <Button variant="secondary" onClick={resetFilters}>
-              Сбросить фильтры
-            </Button>
+      {!loading &&
+        !error &&
+        organizations.length > 0 &&
+        filtered.length === 0 && (
+          <div className="mt-12 rounded-2xl border border-stone-200 bg-white p-10 text-center">
+            <p className="font-bold text-stone-900">Ничего не найдено</p>
+            <p className="mt-1 text-sm text-stone-500">
+              Попробуйте изменить запрос или тип организации.
+            </p>
+            <div className="mt-4 flex justify-center">
+              <Button variant="secondary" onClick={resetFilters}>
+                Сбросить фильтры
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {!loading && !error && filtered.length > 0 && (
         <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
