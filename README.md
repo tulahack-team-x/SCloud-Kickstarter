@@ -102,11 +102,10 @@
 | Загрузка файла | `Content-Type: multipart/form-data` |
 
 *Разберем пример возвращенного JSON с объектом Account*
-**Что вернуло: **
+
 ``{
   "id": "UUID",
   "name": "Иван Петров",
   "email": "ivan@example.com",
   "role": "CUSTOMER"
 }``
-
