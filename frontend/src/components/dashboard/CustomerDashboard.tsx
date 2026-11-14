@@ -1,7 +1,12 @@
 import { CircleCheck, FolderKanban, ListChecks, Wallet } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../Button";
+import Modal from "../Modal";
+import ReviewForm from "../ReviewForm";
+import StageReportModal from "../StageReportModal";
 import { useApiResource } from "../../hooks/useApiResource";
+import { useAuth } from "../../hooks/useAuth";
 import {
   getOrderAcceptedBudgetKopecks,
   getOrderAcceptedStages,
@@ -9,10 +14,12 @@ import {
 } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
 import type {
+  OrderStageView,
   OrderView,
   OrganizationView,
   PageSlice,
   ResearchRequestView,
+  ReviewView,
 } from "../../types/api";
 import CustomerRequestItem from "./CustomerRequestItem";
 import OrderRow from "./OrderRow";
@@ -25,6 +32,13 @@ import {
 } from "./ui";
 
 function CustomerDashboard() {
+  const { user } = useAuth();
+  const [reviewOrder, setReviewOrder] = useState<OrderView | null>(null);
+  const [reportTarget, setReportTarget] = useState<{
+    order: OrderView;
+    stage: OrderStageView;
+  } | null>(null);
+
   const ordersResource =
     useApiResource<PageSlice<OrderView>>("/orders?limit=100");
   const organizationsResource = useApiResource<PageSlice<OrganizationView>>(
@@ -33,11 +47,15 @@ function CustomerDashboard() {
   const requestsResource = useApiResource<PageSlice<ResearchRequestView>>(
     "/requests?limit=100",
   );
+  const reviewsResource = useApiResource<PageSlice<ReviewView>>(
+    "/me/reviews?limit=100",
+  );
 
   if (
     ordersResource.loading ||
     organizationsResource.loading ||
-    requestsResource.loading
+    requestsResource.loading ||
+    reviewsResource.loading
   ) {
     return <DashboardLoading />;
   }
@@ -45,7 +63,8 @@ function CustomerDashboard() {
   const error =
     ordersResource.error ??
     organizationsResource.error ??
-    requestsResource.error;
+    requestsResource.error ??
+    reviewsResource.error;
 
   if (error) {
     return (
@@ -55,6 +74,7 @@ function CustomerDashboard() {
           ordersResource.reload();
           organizationsResource.reload();
           requestsResource.reload();
+          reviewsResource.reload();
         }}
       />
     );
@@ -62,6 +82,11 @@ function CustomerDashboard() {
 
   const orders = ordersResource.data?.items ?? [];
   const requests = requestsResource.data?.items ?? [];
+  const reviewedOrderIds = new Set(
+    (reviewsResource.data?.items ?? [])
+      .filter((review) => review.authorId === user?.id)
+      .map((review) => review.orderId),
+  );
   const openRequests = requests.filter(
     (request) => request.status !== "ACCEPTED",
   );
@@ -141,6 +166,7 @@ function CustomerDashboard() {
                 )}
                 onAccepted={() => {
                   requestsResource.reload();
+          reviewsResource.reload();
                   ordersResource.reload();
                 }}
               />
@@ -161,17 +187,90 @@ function CustomerDashboard() {
           <p className="text-sm text-stone-500">Заказов пока нет.</p>
         ) : (
           <ul className="divide-y divide-stone-100">
-            {orders.map((order) => (
-              <OrderRow
-                key={order.id}
-                order={order}
-                organizationName={organizationNames.get(order.organizationId)}
-                showStages
-              />
-            ))}
+            {orders.map((order) => {
+              const hasAcceptedStage = order.stages.some(
+                (stage) => stage.status === "ACCEPTED",
+              );
+              const reviewed = reviewedOrderIds.has(order.id);
+
+              return (
+                <OrderRow
+                  key={order.id}
+                  order={order}
+                  organizationName={organizationNames.get(
+                    order.organizationId,
+                  )}
+                  showStages
+                  stageAction={(stage) =>
+                    stage.currentReportId ? (
+                      <Button
+                        compact
+                        variant="secondary"
+                        onClick={() => setReportTarget({ order, stage })}
+                      >
+                        Открыть отчёт
+                      </Button>
+                    ) : undefined
+                  }
+                  action={
+                    hasAcceptedStage ? (
+                      reviewed ? (
+                        <p className="text-xs font-semibold text-green-800">
+                          Отзыв опубликован
+                        </p>
+                      ) : (
+                        <Button
+                          compact
+                          onClick={() => setReviewOrder(order)}
+                        >
+                          Оставить отзыв
+                        </Button>
+                      )
+                    ) : undefined
+                  }
+                />
+              );
+            })}
           </ul>
         )}
       </Section>
+
+      <Modal
+        open={!!reviewOrder}
+        onClose={() => setReviewOrder(null)}
+        title="Отзыв о научной команде"
+      >
+        {reviewOrder && (
+          <ReviewForm
+            orderId={reviewOrder.id}
+            onSubmitted={() => {
+              setReviewOrder(null);
+              reviewsResource.reload();
+            }}
+            onCancel={() => setReviewOrder(null)}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        open={!!reportTarget}
+        onClose={() => setReportTarget(null)}
+        title="Отчёт по этапу"
+        description={reportTarget?.stage.title}
+      >
+        {reportTarget && (
+          <StageReportModal
+            orderId={reportTarget.order.id}
+            stage={reportTarget.stage}
+            canDecide
+            onDecided={() => {
+              setReportTarget(null);
+              ordersResource.reload();
+            }}
+            onCancel={() => setReportTarget(null)}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

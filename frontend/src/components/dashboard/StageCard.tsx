@@ -9,6 +9,7 @@ type StageCardProps = {
   weeks: number;
   budgetKopecks: number;
   status?: ReactNode;
+  action?: ReactNode;
 };
 
 function StageCard({
@@ -19,6 +20,7 @@ function StageCard({
   weeks,
   budgetKopecks,
   status,
+  action,
 }: StageCardProps) {
   return (
     <li className="flex gap-3 rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
@@ -37,6 +39,7 @@ function StageCard({
           Приёмка: {acceptance} · {weeks} нед. ·{" "}
           {formatKopecks(budgetKopecks)}
         </p>
+        {action && <div className="mt-3">{action}</div>}
       </div>
     </li>
   );

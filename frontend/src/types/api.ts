@@ -218,3 +218,18 @@ export interface ProposalView {
   createdAt: string;
   stages: ProposalStageDraft[];
 }
+
+
+export interface ReportView {
+  id: string;
+  orderId: string;
+  stageId: string;
+  title: string;
+  work: string;
+  conclusion: string;
+  limitations: string;
+  feedback?: string | null;
+  decision: string;
+  createdAt: string;
+  attachmentIds: string[];
+}

@@ -2,19 +2,25 @@ import { ClipboardList, FlaskConical, HandCoins, Users } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../Button";
+import Modal from "../Modal";
 import RequestProposalForm from "../RequestProposalForm";
+import ReviewForm from "../ReviewForm";
+import StageReportForm from "../StageReportForm";
+import StageReportModal from "../StageReportModal";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useAuth } from "../../hooks/useAuth";
 import { getOrganizationTypeLabel } from "../../lib/organizations";
 import { REQUEST_STATUS_LABELS } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
 import type {
+  OrderStageView,
   OrderView,
   OrganizationView,
   PageSlice,
   ProjectPageItem,
   ProjectView,
   ResearchRequestView,
+  ReviewView,
 } from "../../types/api";
 import OrderRow from "./OrderRow";
 import {
@@ -27,10 +33,19 @@ import {
 } from "./ui";
 
 function ResearcherDashboard() {
-  const { organizations: ownedOrganizations } = useAuth();
+  const { user, organizations: ownedOrganizations } = useAuth();
   const [proposalRequestId, setProposalRequestId] = useState<string | null>(
     null,
   );
+  const [reviewOrder, setReviewOrder] = useState<OrderView | null>(null);
+  const [reportTarget, setReportTarget] = useState<{
+    order: OrderView;
+    stage: OrderStageView;
+  } | null>(null);
+  const [submitTarget, setSubmitTarget] = useState<{
+    order: OrderView;
+    stage: OrderStageView;
+  } | null>(null);
 
   const projectsResource = useApiResource<PageSlice<ProjectView>>(
     "/me/projects?limit=100",
@@ -46,13 +61,17 @@ function ResearcherDashboard() {
   const requestsResource = useApiResource<PageSlice<ResearchRequestView>>(
     "/requests?limit=100",
   );
+  const reviewsResource = useApiResource<PageSlice<ReviewView>>(
+    "/me/reviews?limit=100",
+  );
 
   if (
     projectsResource.loading ||
     catalogResource.loading ||
     ordersResource.loading ||
     organizationsResource.loading ||
-    requestsResource.loading
+    requestsResource.loading ||
+    reviewsResource.loading
   ) {
     return <DashboardLoading />;
   }
@@ -62,7 +81,8 @@ function ResearcherDashboard() {
     catalogResource.error ??
     ordersResource.error ??
     organizationsResource.error ??
-    requestsResource.error;
+    requestsResource.error ??
+    reviewsResource.error;
 
   if (error) {
     return (
@@ -74,6 +94,7 @@ function ResearcherDashboard() {
           ordersResource.reload();
           organizationsResource.reload();
           requestsResource.reload();
+          reviewsResource.reload();
         }}
       />
     );
@@ -95,6 +116,11 @@ function ResearcherDashboard() {
   );
   const organizationNames = new Map(
     (organizationsResource.data?.items ?? []).map((org) => [org.id, org.name]),
+  );
+  const reviewedOrderIds = new Set(
+    (reviewsResource.data?.items ?? [])
+      .filter((review) => review.authorId === user?.id)
+      .map((review) => review.orderId),
   );
 
   const publishedProjects = projects.filter(
@@ -236,13 +262,76 @@ function ResearcherDashboard() {
           <p className="text-sm text-stone-500">Заказов пока нет.</p>
         ) : (
           <ul className="divide-y divide-stone-100">
-            {orders.map((order) => (
-              <OrderRow
-                key={order.id}
-                order={order}
-                organizationName={organizationNames.get(order.organizationId)}
-              />
-            ))}
+            {orders.map((order) => {
+              const canReview =
+                ownedOrganizationIds.has(order.organizationId) &&
+                order.stages.some((stage) => stage.status === "ACCEPTED");
+              const reviewed = reviewedOrderIds.has(order.id);
+
+              return (
+                <OrderRow
+                  key={order.id}
+                  order={order}
+                  organizationName={organizationNames.get(
+                    order.organizationId,
+                  )}
+                  showStages
+                  stageAction={(stage) => {
+                    if (!ownedOrganizationIds.has(order.organizationId)) {
+                      return undefined;
+                    }
+
+                    const canSubmit =
+                      stage.status === "WORKING" ||
+                      stage.status === "REVISION";
+
+                    if (!stage.currentReportId && !canSubmit) {
+                      return undefined;
+                    }
+
+                    return (
+                      <div className="flex flex-wrap gap-2">
+                        {stage.currentReportId && (
+                          <Button
+                            compact
+                            variant="secondary"
+                            onClick={() => setReportTarget({ order, stage })}
+                          >
+                            Открыть отчёт
+                          </Button>
+                        )}
+                        {canSubmit && (
+                          <Button
+                            compact
+                            onClick={() => setSubmitTarget({ order, stage })}
+                          >
+                            {stage.status === "REVISION"
+                              ? "Обновить отчёт"
+                              : "Сдать этап"}
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  }}
+                  action={
+                    canReview ? (
+                      reviewed ? (
+                        <p className="text-xs font-semibold text-green-800">
+                          Отзыв опубликован
+                        </p>
+                      ) : (
+                        <Button
+                          compact
+                          onClick={() => setReviewOrder(order)}
+                        >
+                          Оставить отзыв
+                        </Button>
+                      )
+                    ) : undefined
+                  }
+                />
+              );
+            })}
           </ul>
         )}
       </Section>
@@ -350,6 +439,59 @@ function ResearcherDashboard() {
           </ul>
         )}
       </Section>
+
+      <Modal
+        open={!!reviewOrder}
+        onClose={() => setReviewOrder(null)}
+        title="Отзыв о заказчике"
+      >
+        {reviewOrder && (
+          <ReviewForm
+            orderId={reviewOrder.id}
+            onSubmitted={() => {
+              setReviewOrder(null);
+              reviewsResource.reload();
+            }}
+            onCancel={() => setReviewOrder(null)}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        open={!!submitTarget}
+        onClose={() => setSubmitTarget(null)}
+        title="Сдать этап"
+        description={submitTarget?.stage.title}
+      >
+        {submitTarget && (
+          <StageReportForm
+            orderId={submitTarget.order.id}
+            stage={submitTarget.stage}
+            onSubmitted={() => {
+              setSubmitTarget(null);
+              ordersResource.reload();
+            }}
+            onCancel={() => setSubmitTarget(null)}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        open={!!reportTarget}
+        onClose={() => setReportTarget(null)}
+        title="Отчёт по этапу"
+        description={reportTarget?.stage.title}
+      >
+        {reportTarget && (
+          <StageReportModal
+            orderId={reportTarget.order.id}
+            stage={reportTarget.stage}
+            canDecide={false}
+            onDecided={() => setReportTarget(null)}
+            onCancel={() => setReportTarget(null)}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

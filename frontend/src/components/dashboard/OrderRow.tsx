@@ -1,5 +1,6 @@
 import { getOrderBudgetKopecks } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
+import type { ReactNode } from "react";
 import type { OrderView, StageStatus } from "../../types/api";
 import StageCard from "./StageCard";
 import { Badge } from "./ui";
@@ -8,6 +9,8 @@ type OrderRowProps = {
   order: OrderView;
   organizationName?: string;
   showStages?: boolean;
+  action?: ReactNode;
+  stageAction?: (stage: OrderView["stages"][number]) => ReactNode;
 };
 
 const STAGE_STATUS_LABELS: Record<StageStatus, string> = {
@@ -18,7 +21,13 @@ const STAGE_STATUS_LABELS: Record<StageStatus, string> = {
   REVISION: "На доработке",
 };
 
-function OrderRow({ order, organizationName, showStages }: OrderRowProps) {
+function OrderRow({
+  order,
+  organizationName,
+  showStages,
+  action,
+  stageAction,
+}: OrderRowProps) {
   return (
     <li className="py-4 first:pt-0 last:pb-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -73,11 +82,14 @@ function OrderRow({ order, organizationName, showStages }: OrderRowProps) {
                     {STAGE_STATUS_LABELS[stage.status]}
                   </Badge>
                 }
+                action={stageAction?.(stage)}
               />
             ))}
           </ol>
         </details>
       )}
+
+      {action && <div className="mt-3">{action}</div>}
     </li>
   );
 }
