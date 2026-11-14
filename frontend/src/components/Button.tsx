@@ -13,11 +13,13 @@ const variants: Record<ButtonVariant, string> = {
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   asChild?: boolean;
+  compact?: boolean;
 };
 
 function Button({
   variant = "primary",
   asChild = false,
+  compact = false,
   className,
   ...props
 }: ButtonProps) {
@@ -26,7 +28,8 @@ function Button({
   return (
     <Comp
       className={clsx(
-        "group inline-flex items-center gap-2 rounded-lg px-5 py-3 text-sm font-bold transition-colors focus-ring disabled:pointer-events-none disabled:opacity-50",
+        "group inline-flex items-center gap-2 rounded-lg text-sm font-bold transition-colors focus-ring disabled:pointer-events-none disabled:opacity-50",
+        compact ? "px-3 py-2" : "px-5 py-3",
         variants[variant],
         className,
       )}
