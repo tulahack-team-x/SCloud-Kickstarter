@@ -1,8 +1,7 @@
-import { ArrowLeft, FolderKanban, MapPin, Star, Users } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
-import Button from "../components/Button";
+import { FolderKanban, MapPin, Star, Users } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { BackLink, PageError, PageLoading } from "../components/PageState";
 import ProjectCard from "../components/ProjectCard";
-import Spinner from "../components/Spinner";
 import { useApiResource } from "../hooks/useApiResource";
 import { formatDate } from "../lib/format";
 import {
@@ -52,11 +51,7 @@ function OrganizationDetails({ id }: { id: string }) {
     projectsResource.loading ||
     reviewsResource.loading
   ) {
-    return (
-      <div className="flex justify-center py-16">
-        <Spinner className="size-6 text-green-800" />
-      </div>
-    );
+    return <PageLoading />;
   }
 
   const error =
@@ -68,29 +63,17 @@ function OrganizationDetails({ id }: { id: string }) {
   if (error || !organizationResource.data) {
     return (
       <section className="mx-auto max-w-2xl">
-        <Link
-          to="/organizations"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-stone-500 transition-colors hover:text-green-800"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          Ко всем организациям
-        </Link>
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-6">
-          <p className="text-sm text-red-700">
-            {error ?? "Организация не найдена"}
-          </p>
-          <div className="mt-4">
-            <Button
-              onClick={() => {
-                organizationResource.reload();
-                membersResource.reload();
-                projectsResource.reload();
-                reviewsResource.reload();
-              }}
-            >
-              Повторить
-            </Button>
-          </div>
+        <BackLink to="/organizations">Ко всем организациям</BackLink>
+        <div className="mt-6">
+          <PageError
+            message={error ?? "Организация не найдена"}
+            onRetry={() => {
+              organizationResource.reload();
+              membersResource.reload();
+              projectsResource.reload();
+              reviewsResource.reload();
+            }}
+          />
         </div>
       </section>
     );
@@ -113,13 +96,7 @@ function OrganizationDetails({ id }: { id: string }) {
 
   return (
     <section>
-      <Link
-        to="/organizations"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-stone-500 transition-colors hover:text-green-800"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        Ко всем организациям
-      </Link>
+      <BackLink to="/organizations">Ко всем организациям</BackLink>
 
       <div className="mt-6 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-wrap items-start gap-5">
