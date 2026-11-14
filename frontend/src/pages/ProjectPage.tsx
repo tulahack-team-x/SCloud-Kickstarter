@@ -402,7 +402,6 @@ function ProjectDetails({ id }: { id: string }) {
         open={showRequest}
         onClose={() => setShowRequest(false)}
         title="Предложить задачу"
-        description="Опишите задачу — команда сможет подготовить предложение."
       >
         {organization && (
           <ResearchRequestForm

@@ -29,7 +29,9 @@ function Rating({ value }: { value: number }) {
       {Array.from({ length: 5 }, (_, index) => (
         <Star
           key={index}
-          className={index < value ? "size-3.5 fill-current" : "size-3.5 text-stone-300"}
+          className={
+            index < value ? "size-3.5 fill-current" : "size-3.5 text-stone-300"
+          }
           aria-hidden="true"
         />
       ))}
@@ -157,29 +159,34 @@ function OrganizationDetails({ id }: { id: string }) {
             </Button>
           )}
 
-          {isCustomer &&
-            organization.type === "SCIENTIFIC" &&
-            !requesting && (
-              <Button
-                onClick={() => {
-                  setRequesting(true);
-                  setRequestSent(false);
-                }}
-              >
-                Предложить задачу
-              </Button>
-            )}
+          {isCustomer && organization.type === "SCIENTIFIC" && !requesting && (
+            <Button
+              onClick={() => {
+                setRequesting(true);
+                setRequestSent(false);
+              }}
+            >
+              Предложить задачу
+            </Button>
+          )}
         </div>
 
         <div className="mt-6 grid gap-3 border-t border-stone-100 pt-5 text-sm sm:grid-cols-3">
           <div className="flex items-center gap-2 text-stone-600">
             <Users className="size-4 text-stone-400" aria-hidden="true" />
-            <span className="font-semibold text-stone-950">{members.length}</span>
+            <span className="font-semibold text-stone-950">
+              {members.length}
+            </span>
             участников
           </div>
           <div className="flex items-center gap-2 text-stone-600">
-            <FolderKanban className="size-4 text-stone-400" aria-hidden="true" />
-            <span className="font-semibold text-stone-950">{projects.length}</span>
+            <FolderKanban
+              className="size-4 text-stone-400"
+              aria-hidden="true"
+            />
+            <span className="font-semibold text-stone-950">
+              {projects.length}
+            </span>
             исследований
           </div>
           <div className="flex items-center gap-2 text-stone-600">
@@ -260,7 +267,10 @@ function OrganizationDetails({ id }: { id: string }) {
             ) : (
               <ul className="mt-5 space-y-5">
                 {reviews.map((review) => (
-                  <li key={review.id} className="border-b border-stone-100 pb-5 last:border-0 last:pb-0">
+                  <li
+                    key={review.id}
+                    className="border-b border-stone-100 pb-5 last:border-0 last:pb-0"
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <Rating value={review.rating} />
                       <span className="text-xs text-stone-500">
@@ -282,11 +292,16 @@ function OrganizationDetails({ id }: { id: string }) {
             <h2 className="text-lg font-bold text-stone-950">Участники</h2>
 
             {members.length === 0 ? (
-              <p className="mt-3 text-sm text-stone-500">Участников пока нет.</p>
+              <p className="mt-3 text-sm text-stone-500">
+                Участников пока нет.
+              </p>
             ) : (
               <ul className="mt-4 divide-y divide-stone-100">
                 {members.map((member) => (
-                  <li key={member.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <li
+                    key={member.id}
+                    className="flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+                  >
                     <span className="grid size-9 shrink-0 place-items-center rounded-full bg-stone-100 text-xs font-bold text-stone-600">
                       {member.name.charAt(0).toUpperCase()}
                     </span>
@@ -326,7 +341,6 @@ function OrganizationDetails({ id }: { id: string }) {
         open={requesting}
         onClose={() => setRequesting(false)}
         title="Предложить задачу"
-        description="Опишите задачу — команда сможет подготовить предложение."
       >
         <ResearchRequestForm
           organizationId={organization.id}
