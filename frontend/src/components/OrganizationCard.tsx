@@ -1,10 +1,7 @@
 import { ArrowUpRight, FolderKanban, MapPin, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import {
-  getOrganizationInitials,
-  getOrganizationLocation,
-  getOrganizationTypeLabel,
-} from "../lib/organizations";
+import { getOrganizationLocation } from "../lib/organizations";
+import OrganizationIcon from "./OrganizationIcon";
 import type { OrganizationWithProjects } from "../lib/organizations";
 
 function OrganizationCard({
@@ -23,18 +20,13 @@ function OrganizationCard({
       />
 
       <div className="pointer-events-none relative z-10 flex h-full flex-col">
-        <div className="flex items-start gap-4">
-          <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-green-100 text-sm font-black text-green-900">
-            {getOrganizationInitials(organization.name)}
-          </span>
+        <div className="flex items-center gap-4">
+          <OrganizationIcon type={organization.type} className="size-12" />
 
           <div className="min-w-0">
             <h2 className="text-xl font-bold leading-tight text-stone-950">
               {organization.name}
             </h2>
-            <span className="mt-2 inline-flex rounded-full bg-green-50 px-2.5 py-1 text-xs font-bold text-green-800">
-              {getOrganizationTypeLabel(organization.type)}
-            </span>
           </div>
         </div>
 
