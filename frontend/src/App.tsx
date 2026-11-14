@@ -1,28 +1,25 @@
 import { Outlet, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
-
 import CatalogPage from "./pages/CatalogPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
 import ProjectPage from "./pages/ProjectPage";
 import CabinetPage from "./pages/CabinetPage";
 
-import "./App.css";
-
 function AppLayout() {
   return (
-    <>
+    <div className="min-h-screen bg-stone-100 font-sans text-stone-900">
       <Header />
-      <main>
+      <main className="mx-auto max-w-[1560px] px-8 py-16 max-lg:px-5">
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
 
 function NotFoundPage() {
   return (
     <section>
-      <h1>Страница не найдена</h1>
+      <h1 className="text-4xl font-black tracking-tight">Страница не найдена</h1>
     </section>
   );
 }

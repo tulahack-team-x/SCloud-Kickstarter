@@ -1,7 +1,7 @@
 function OrganizationsPage() {
   return (
     <section>
-      <h1>Организации</h1>
+      <h1 className="text-4xl font-black tracking-tight">Организации</h1>
     </section>
   );
 }
