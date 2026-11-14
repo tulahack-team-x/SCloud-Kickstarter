@@ -1,4 +1,4 @@
-import { Building2, HandCoins, Users } from "lucide-react";
+import { Building2, HandCoins, MapPin, Users } from "lucide-react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -378,7 +378,8 @@ function ProjectDetails({ id }: { id: string }) {
               </div>
 
               {getOrganizationLocation(organization) && (
-                <p className="mt-4 text-xs text-stone-500">
+                <p className="mt-4 inline-flex items-center gap-1.5 text-xs text-stone-500">
+                  <MapPin className="size-3.5" aria-hidden="true" />
                   {getOrganizationLocation(organization)}
                 </p>
               )}
