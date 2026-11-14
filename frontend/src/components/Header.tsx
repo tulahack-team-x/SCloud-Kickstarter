@@ -53,7 +53,7 @@ function Header() {
                 className={clsx(
                   "rounded-md text-sm font-bold transition-colors focus-ring",
                   active
-                    ? "text-green-800"
+                    ? "text-green-800 underline underline-offset-4"
                     : "text-stone-950 hover:text-green-800",
                 )}
               >
