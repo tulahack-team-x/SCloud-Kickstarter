@@ -12,10 +12,10 @@ import { useAuth } from "../hooks/useAuth";
 import { apiFetch, getApiErrorMessage } from "../lib/api";
 import { formatDate, formatKopecks } from "../lib/format";
 import {
-  getOrganizationInitials,
   getOrganizationLocation,
   getOrganizationTypeLabel,
 } from "../lib/organizations";
+import OrganizationIcon from "../components/OrganizationIcon";
 import type {
   OrganizationView,
   PageSlice,
@@ -255,10 +255,7 @@ function ProjectDetails({ id }: { id: string }) {
 
         <aside className="space-y-6">
           <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-green-800">
-              Сбор средств
-            </p>
-            <p className="mt-3 text-2xl font-black text-stone-950">
+            <p className="text-2xl font-black text-stone-950">
               {formatKopecks(funding.amountKopecks)}
             </p>
             <p className="mt-1 text-xs text-stone-500">
@@ -361,9 +358,10 @@ function ProjectDetails({ id }: { id: string }) {
           {organization && (
             <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
               <div className="flex items-start gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-green-100 text-xs font-black text-green-900">
-                  {getOrganizationInitials(organization.name)}
-                </span>
+                <OrganizationIcon
+                  type={organization.type}
+                  className="size-11 rounded-xl"
+                />
                 <div className="min-w-0">
                   <Link
                     to={`/organizations/${organization.id}`}

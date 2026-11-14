@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
+import OrganizationIcon from "../components/OrganizationIcon";
 import OrganizationEditForm from "../components/OrganizationEditForm";
 import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
@@ -10,11 +11,7 @@ import ProjectCard from "../components/ProjectCard";
 import { useApiResource } from "../hooks/useApiResource";
 import { useAuth } from "../hooks/useAuth";
 import { formatDate } from "../lib/format";
-import {
-  getOrganizationInitials,
-  getOrganizationLocation,
-  getOrganizationTypeLabel,
-} from "../lib/organizations";
+import { getOrganizationLocation } from "../lib/organizations";
 import type {
   MemberView,
   OrganizationView,
@@ -119,9 +116,7 @@ function OrganizationDetails({ id }: { id: string }) {
 
       <div className="mt-6 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-wrap items-start gap-5">
-          <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-green-100 text-lg font-black text-green-900">
-            {getOrganizationInitials(organization.name)}
-          </span>
+          <OrganizationIcon type={organization.type} className="size-16" />
 
           <div className="min-w-0 flex-1">
             <h1 className="text-3xl font-black leading-tight tracking-tight text-stone-950">
@@ -129,9 +124,6 @@ function OrganizationDetails({ id }: { id: string }) {
             </h1>
 
             <div className="mt-3 flex flex-wrap items-center gap-3">
-              <span className="inline-flex rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-green-800">
-                {getOrganizationTypeLabel(organization.type)}
-              </span>
               {location && (
                 <span className="inline-flex items-center gap-1.5 text-xs text-stone-500">
                   <MapPin className="size-3.5" aria-hidden="true" />
