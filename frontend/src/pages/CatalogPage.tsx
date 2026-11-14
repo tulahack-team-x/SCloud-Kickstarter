@@ -1,34 +1,20 @@
 import clsx from "clsx";
 import { Search, X } from "lucide-react";
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
 import Button from "../components/Button";
 import ProjectCard from "../components/ProjectCard";
 import Spinner from "../components/Spinner";
-import { apiFetch } from "../lib/api";
-import type {
-  OrganizationView,
-  PageSlice,
-  ProjectPageItem,
-} from "../types/api";
-
-type SortOption = "newest" | "funded" | "contributions";
-
-const SORT_OPTIONS: { value: SortOption; label: string }[] = [
-  { value: "newest", label: "Сначала новые" },
-  { value: "funded", label: "Больше собрано" },
-  { value: "contributions", label: "Больше взносов" },
-];
-
-const ALL_CATEGORIES = "Все";
+import { useCatalogData } from "../hooks/useCatalogData";
+import {
+  ALL_CATEGORIES,
+  filterProjects,
+  getCategories,
+  SORT_OPTIONS,
+  type SortOption,
+} from "../lib/catalog";
 
 function CatalogPage() {
-  const [items, setItems] = useState<ProjectPageItem[]>([]);
-  const [organizations, setOrganizations] = useState<Map<string, string>>(
-    new Map(),
-  );
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [requestId, setRequestId] = useState(0);
+  const { items, organizations, loading, error, reload } = useCatalogData();
 
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(ALL_CATEGORIES);
@@ -36,88 +22,27 @@ function CatalogPage() {
 
   const deferredQuery = useDeferredValue(query);
 
-  useEffect(() => {
-    let cancelled = false;
+  const organizationNames = useMemo(
+    () => new Map(organizations.map((org) => [org.id, org.name])),
+    [organizations],
+  );
 
-    async function loadProjects() {
-      try {
-        const [projects, orgs] = await Promise.all([
-          apiFetch<PageSlice<ProjectPageItem>>("/projects?limit=100"),
-          apiFetch<PageSlice<OrganizationView>>("/organizations?limit=100"),
-        ]);
+  const categories = useMemo(() => getCategories(items), [items]);
 
-        if (!cancelled) {
-          setItems(projects.items);
-          setOrganizations(
-            new Map(orgs.items.map((org) => [org.id, org.name])),
-          );
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Не удалось загрузить исследования",
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    }
-
-    void loadProjects();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [requestId]);
-
-  const categories = useMemo(() => {
-    const unique = Array.from(
-      new Set(items.map(({ project }) => project.category)),
-    ).sort((a, b) => a.localeCompare(b, "ru"));
-
-    return [ALL_CATEGORIES, ...unique];
-  }, [items]);
-
-  const filtered = useMemo(() => {
-    const search = deferredQuery.trim().toLocaleLowerCase("ru");
-
-    const result = items.filter(({ project }) => {
-      const matchesCategory =
-        category === ALL_CATEGORIES || project.category === category;
-      const teamName = organizations.get(project.organizationId) ?? "";
-      const haystack =
-        `${project.title} ${project.summary} ${project.category} ${project.hypothesis} ${teamName}`.toLocaleLowerCase(
-          "ru",
-        );
-
-      return matchesCategory && (!search || haystack.includes(search));
-    });
-
-    return result.sort((a, b) => {
-      if (sort === "funded") {
-        return b.funding.amountKopecks - a.funding.amountKopecks;
-      }
-
-      if (sort === "contributions") {
-        return b.funding.contributions - a.funding.contributions;
-      }
-
-      return b.project.createdAt.localeCompare(a.project.createdAt);
-    });
-  }, [items, organizations, deferredQuery, category, sort]);
+  const filtered = useMemo(
+    () =>
+      filterProjects({
+        items,
+        organizations: organizationNames,
+        query: deferredQuery,
+        category,
+        sort,
+      }),
+    [items, organizationNames, deferredQuery, category, sort],
+  );
 
   const hasFilters =
     query.trim() !== "" || category !== ALL_CATEGORIES || sort !== "newest";
-
-  function reload() {
-    setLoading(true);
-    setError(null);
-    setRequestId((current) => current + 1);
-  }
 
   function resetFilters() {
     setQuery("");
@@ -249,7 +174,7 @@ function CatalogPage() {
               key={project.id}
               project={project}
               funding={funding}
-              teamName={organizations.get(project.organizationId)}
+              teamName={organizationNames.get(project.organizationId)}
             />
           ))}
         </div>
