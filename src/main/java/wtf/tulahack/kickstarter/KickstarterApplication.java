@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class KickstarterApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(KickstarterApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(KickstarterApplication.class, args);
+    }
 }
