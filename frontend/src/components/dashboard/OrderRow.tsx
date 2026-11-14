@@ -1,11 +1,6 @@
-import {
-  getLabel,
-  getOrderBudgetKopecks,
-  ORDER_STATUS_LABELS,
-  STAGE_STATUS_LABELS,
-} from "../../lib/dashboard";
+import { getOrderBudgetKopecks } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
-import type { OrderView } from "../../types/api";
+import type { OrderView, StageStatus } from "../../types/api";
 import StageCard from "./StageCard";
 import { Badge } from "./ui";
 
@@ -15,12 +10,13 @@ type OrderRowProps = {
   showStages?: boolean;
 };
 
-function stageTone(status: string): "green" | "sky" | "amber" | "stone" {
-  if (status === "ACCEPTED") return "green";
-  if (status === "WORKING") return "sky";
-  if (status === "REVIEW" || status === "REVISION") return "amber";
-  return "stone";
-}
+const STAGE_STATUS_LABELS: Record<StageStatus, string> = {
+  PLANNED: "Запланирован",
+  WORKING: "В работе",
+  REVIEW: "На проверке",
+  ACCEPTED: "Принят",
+  REVISION: "На доработке",
+};
 
 function OrderRow({ order, organizationName, showStages }: OrderRowProps) {
   return (
@@ -39,14 +35,17 @@ function OrderRow({ order, organizationName, showStages }: OrderRowProps) {
           </p>
           <div className="mt-1">
             <Badge tone={order.status === "ACTIVE" ? "green" : "sky"}>
-              {getLabel(ORDER_STATUS_LABELS, order.status)}
+              {order.status === "COMPLETED" ? "Завершён" : "В работе"}
             </Badge>
           </div>
         </div>
       </div>
 
       {showStages && order.stages.length > 0 && (
-        <details open className="mt-3 rounded-xl border border-stone-100 bg-stone-50 p-3">
+        <details
+          open
+          className="mt-3 rounded-xl border border-stone-100 bg-stone-50 p-3"
+        >
           <summary className="cursor-pointer text-xs font-semibold text-green-800">
             Этапы заказа
           </summary>
@@ -61,8 +60,17 @@ function OrderRow({ order, organizationName, showStages }: OrderRowProps) {
                 weeks={stage.weeks}
                 budgetKopecks={stage.budgetKopecks}
                 status={
-                  <Badge tone={stageTone(stage.status)}>
-                    {getLabel(STAGE_STATUS_LABELS, stage.status)}
+                  <Badge
+                    tone={
+                      stage.status === "ACCEPTED" ||
+                      stage.status === "WORKING"
+                        ? "green"
+                        : stage.status === "PLANNED"
+                          ? "stone"
+                          : "amber"
+                    }
+                  >
+                    {STAGE_STATUS_LABELS[stage.status]}
                   </Badge>
                 }
               />

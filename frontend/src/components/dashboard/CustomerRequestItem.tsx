@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { apiFetch, getApiErrorMessage } from "../../lib/api";
-import {
-  getLabel,
-  REQUEST_STATUS_LABELS,
-} from "../../lib/dashboard";
+import { REQUEST_STATUS_LABELS } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
 import type {
   PageSlice,
@@ -84,7 +81,7 @@ function CustomerRequestItem({
           </p>
           <div className="mt-1">
             <Badge tone={tone}>
-              {getLabel(REQUEST_STATUS_LABELS, request.status)}
+              {REQUEST_STATUS_LABELS[request.status]}
             </Badge>
           </div>
         </div>

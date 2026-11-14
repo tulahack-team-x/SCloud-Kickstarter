@@ -383,16 +383,13 @@ function ProjectDetails({ id }: { id: string }) {
                 </p>
               )}
 
-              {user?.role === "CUSTOMER" &&
-                organization &&
-                !showRequest &&
-                !requestSent && (
-                  <div className="mt-5">
-                    <Button onClick={() => setShowRequest(true)}>
-                      Предложить задачу
-                    </Button>
-                  </div>
-                )}
+              {user?.role === "CUSTOMER" && organization && !requestSent && (
+                <div className="mt-5">
+                  <Button onClick={() => setShowRequest(true)}>
+                    Предложить задачу
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </aside>

@@ -4,6 +4,18 @@ export interface PageSlice<T> {
   hasMore: boolean;
 }
 
+export type ProjectStatus = "DRAFT" | "PUBLISHED";
+export type OrderStatus = "ACTIVE" | "COMPLETED";
+export type StageStatus =
+  | "PLANNED"
+  | "WORKING"
+  | "REVIEW"
+  | "ACCEPTED"
+  | "REVISION";
+export type ContributionStatus = "PENDING" | "CONFIRMED";
+export type RequestStatus = "SENT" | "PROPOSED" | "ACCEPTED";
+export type OrganizationType = "SCIENTIFIC" | "COMPANY";
+
 export interface FundingSummary {
   amountKopecks: number;
   contributors: number;
@@ -31,7 +43,7 @@ export interface ProjectView {
   result: string;
   risks: string;
   visibility: "PUBLIC" | "PRIVATE";
-  status: string;
+  status: ProjectStatus;
   version: number;
   createdAt: string;
   stages: StageView[];
@@ -54,7 +66,7 @@ export interface OrganizationView {
   id: string;
   ownerId: string;
   name: string;
-  type: string;
+  type: OrganizationType;
   institution?: string;
   city?: string;
   direction?: string;
@@ -111,7 +123,7 @@ export interface ContributionView {
   projectId: string;
   userId: string;
   amountKopecks: number;
-  status: string;
+  status: ContributionStatus;
   createdAt: string;
   version: number;
 }
@@ -137,7 +149,7 @@ export interface OrderStageView {
   acceptance: string;
   weeks: number;
   budgetKopecks: number;
-  status: string;
+  status: StageStatus;
   currentReportId?: string | null;
   version: number;
 }
@@ -149,7 +161,7 @@ export interface OrderView {
   customerId: string;
   organizationId: string;
   title: string;
-  status: string;
+  status: OrderStatus;
   version: number;
   createdAt: string;
   stages: OrderStageView[];
@@ -186,7 +198,7 @@ export interface ResearchRequestView {
   description: string;
   budgetKopecks: number;
   weeks: number;
-  status: string;
+  status: RequestStatus;
   version: number;
   createdAt: string;
 }

@@ -159,7 +159,7 @@ function OrganizationDetails({ id }: { id: string }) {
             </Button>
           )}
 
-          {isCustomer && organization.type === "SCIENTIFIC" && !requesting && (
+          {isCustomer && organization.type === "SCIENTIFIC" && (
             <Button
               onClick={() => {
                 setRequesting(true);

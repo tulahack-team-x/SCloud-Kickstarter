@@ -6,11 +6,7 @@ import RequestProposalForm from "../RequestProposalForm";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useAuth } from "../../hooks/useAuth";
 import { getOrganizationTypeLabel } from "../../lib/organizations";
-import {
-  getLabel,
-  PROJECT_STATUS_LABELS,
-  REQUEST_STATUS_LABELS,
-} from "../../lib/dashboard";
+import { REQUEST_STATUS_LABELS } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
 import type {
   OrderView,
@@ -214,7 +210,9 @@ function ResearcherDashboard() {
                           project.status === "PUBLISHED" ? "green" : "amber"
                         }
                       >
-                        {getLabel(PROJECT_STATUS_LABELS, project.status)}
+                        {project.status === "PUBLISHED"
+                          ? "Опубликован"
+                          : "Черновик"}
                       </Badge>
                     </div>
                     {project.status === "DRAFT" && (
@@ -288,7 +286,7 @@ function ResearcherDashboard() {
                               : "sky"
                         }
                       >
-                        {getLabel(REQUEST_STATUS_LABELS, request.status)}
+                        {REQUEST_STATUS_LABELS[request.status]}
                       </Badge>
                     </div>
                   </div>
