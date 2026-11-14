@@ -1,4 +1,5 @@
 package wtf.tulahack.kickstarter.identify.api;
 
-public record AccountView() {
-}
+import wtf.tulahack.kickstarter.shared.model.AccountRole;
+
+public record AccountView(String id, String name, String email, AccountRole role) {}
