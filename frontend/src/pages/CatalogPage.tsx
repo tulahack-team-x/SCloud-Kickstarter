@@ -1,7 +1,8 @@
-import clsx from "clsx";
 import { Search, X } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import Button from "../components/Button";
+import IconButton from "../components/IconButton";
+import CategoryButton from "../components/CategoryButton";
 import ProjectCard from "../components/ProjectCard";
 import Spinner from "../components/Spinner";
 import { useCatalogData } from "../hooks/useCatalogData";
@@ -90,30 +91,22 @@ function CatalogPage() {
 
         <div className="flex flex-wrap items-center gap-2.5">
           {categories.map((value) => (
-            <button
+            <CategoryButton
               key={value}
-              type="button"
-              aria-pressed={category === value}
+              label={value}
+              isActive={category === value}
               onClick={() => setCategory(value)}
-              className={clsx(
-                "rounded-full border px-4 py-2 text-xs font-bold transition-colors",
-                category === value
-                  ? "border-green-800 bg-green-800 text-white"
-                  : "border-stone-300 bg-white text-stone-700 hover:border-green-700 hover:text-green-800",
-              )}
-            >
-              {value}
-            </button>
+            />
           ))}
 
           {hasFilters && (
-            <button
-              type="button"
+            <IconButton
+              label="Сбросить фильтры"
               onClick={resetFilters}
-              className="ml-1 text-xs font-semibold text-stone-500 underline-offset-2 hover:text-stone-800 hover:underline"
+              className="ml-1 text-stone-400"
             >
-              Сбросить
-            </button>
+              <X className="size-4" aria-hidden="true" />
+            </IconButton>
           )}
         </div>
       </div>

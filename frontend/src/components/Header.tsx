@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "./Button";
-import { ArrowRight } from "lucide-react";
+import IconButton from "./IconButton";
+import { ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 
 const LINKS = [
@@ -81,13 +82,13 @@ function Header() {
                 >
                   {user.name}
                 </Link>
-                <button
-                  type="button"
+                <IconButton
+                  label="Выйти"
                   onClick={() => void handleLogout()}
-                  className="rounded-md text-sm font-bold text-stone-500 transition-colors hover:text-green-800 focus-ring"
+                  className="text-stone-500"
                 >
-                  Выйти
-                </button>
+                  <LogOut className="size-4" aria-hidden="true" />
+                </IconButton>
               </>
             ) : (
               <>

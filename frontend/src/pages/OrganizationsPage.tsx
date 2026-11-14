@@ -1,7 +1,8 @@
-import clsx from "clsx";
 import { Search, X } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import Button from "../components/Button";
+import IconButton from "../components/IconButton";
+import CategoryButton from "../components/CategoryButton";
 import OrganizationCard from "../components/OrganizationCard";
 import Spinner from "../components/Spinner";
 import { useOrganizationsData } from "../hooks/useOrganizationsData";
@@ -79,30 +80,22 @@ function OrganizationsPage() {
 
         <div className="flex flex-wrap items-center gap-2.5">
           {typeOptions.map((option) => (
-            <button
+            <CategoryButton
               key={option.value}
-              type="button"
-              aria-pressed={type === option.value}
+              label={option.label}
+              isActive={type === option.value}
               onClick={() => setType(option.value)}
-              className={clsx(
-                "rounded-full border px-4 py-2 text-xs font-bold transition-colors",
-                type === option.value
-                  ? "border-green-800 bg-green-800 text-white"
-                  : "border-stone-300 bg-white text-stone-700 hover:border-green-700 hover:text-green-800",
-              )}
-            >
-              {option.label}
-            </button>
+            />
           ))}
 
           {hasFilters && (
-            <button
-              type="button"
+            <IconButton
+              label="Сбросить фильтры"
               onClick={resetFilters}
-              className="ml-1 text-xs font-semibold text-stone-500 underline-offset-2 hover:text-stone-800 hover:underline"
+              className="ml-1 text-stone-400"
             >
-              Сбросить
-            </button>
+              <X className="size-4" aria-hidden="true" />
+            </IconButton>
           )}
         </div>
       </div>
