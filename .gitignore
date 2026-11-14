@@ -2,6 +2,7 @@
 build/
 out/
 bin/
+data/
 .idea/
 .vscode/
 *.iml
@@ -41,3 +42,8 @@ node_modules/
 coverage/
 .tooling/
 !gradle/wrapper/gradle-wrapper.jar
+__pycache__/
+*.py[cod]
+.venv/
+*.yml
+*.yaml
