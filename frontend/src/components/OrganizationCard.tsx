@@ -15,7 +15,7 @@ function OrganizationCard({
   const organizationPath = `/organizations/${organization.id}`;
 
   return (
-    <article className="group relative flex h-full flex-col rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group relative flex h-full flex-col rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm transition duration-200 hover:brightness-[98%] hover:shadow-md">
       <Link
         to={organizationPath}
         aria-label={`Открыть организацию "${organization.name}"`}

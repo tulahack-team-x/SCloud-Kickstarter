@@ -18,6 +18,7 @@ type ProjectCardProps = ProjectPageItem & {
 
 function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
   const projectPath = `/projects/${project.id}`;
+  const organizationPath = `/organizations/${project.organizationId}`;
   const goalKopecks = project.stages.reduce(
     (total, stage) => total + stage.budgetKopecks,
     0,
@@ -28,12 +29,14 @@ function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
       : 0;
 
   return (
-    <Link
-      to={projectPath}
-      aria-label={`Открыть проект "${project.title}"`}
-      className="group block h-full rounded-2xl focus-ring"
-    >
-      <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group relative h-full overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm transition duration-200 hover:brightness-[98%] hover:shadow-md">
+      <Link
+        to={projectPath}
+        aria-label={`Открыть проект «${project.title}»`}
+        className="absolute inset-0 z-0 rounded-2xl focus-ring"
+      />
+
+      <div className="pointer-events-none relative z-10 flex h-full flex-col">
         <div className="relative block h-40 overflow-hidden bg-gradient-to-br">
           <div
             className={clsx(
@@ -60,10 +63,13 @@ function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
 
           <div className="mt-auto pt-7">
             {teamName && (
-              <p className="mb-5 flex items-center gap-1.5 text-xs font-semibold text-stone-500">
+              <Link
+                to={organizationPath}
+                className="pointer-events-auto relative z-20 mb-5 flex items-center gap-1.5 text-xs font-semibold text-stone-500 transition-colors hover:text-green-800 focus-ring hover:"
+              >
                 <Building2 className="size-3.5" aria-hidden="true" />
                 {teamName}
-              </p>
+              </Link>
             )}
 
             <div className="flex items-end justify-between gap-3">
@@ -108,8 +114,8 @@ function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
             </div>
           </div>
         </div>
-      </article>
-    </Link>
+      </div>
+    </article>
   );
 }
 
