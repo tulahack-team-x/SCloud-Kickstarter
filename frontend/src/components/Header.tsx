@@ -1,58 +1,51 @@
-const LINKS = ["Исследования", "Организации", "Кабинет"];
+import { Link, useLocation } from "react-router-dom";
 
-function Header({ page, onNavigate, onAuth }) {
-  const active = page.name === "Проект" ? "Исследования" : page.name;
+const LINKS = [
+  { label: "Исследования", to: "/" },
+  { label: "Организации", to: "/organizations" },
+  { label: "Кабинет", to: "/cabinet" },
+];
+
+function Header() {
+  const { pathname } = useLocation();
+
+  const active =
+    pathname === "/" || pathname.startsWith("/projects")
+      ? "Исследования"
+      : pathname.startsWith("/organizations")
+        ? "Организации"
+        : pathname.startsWith("/cabinet")
+          ? "Кабинет"
+          : "";
 
   return (
     <div className="header-wrap">
       <header className="header">
-        {/* Лого + название + слоган — одна большая «невидимая» кнопка */}
-        <button
-          type="button"
-          className="brand"
-          aria-label="Гипотеза — на главную"
-          onClick={() => onNavigate("Исследования")}
-        >
-          <span className="brand__logo">г.</span>
-          <span className="brand__name">гипотеза</span>
-          <span className="brand__tagline">
-            наука с вашим
-            <br />
-            участием
-          </span>
-        </button>
+        <Link className="brand" to="/" aria-label="На главную">
+          <span className="brand__name">SCloud - kickStarter</span>
+          <span className="brand__tagline">наука с вашим участием</span>
+        </Link>
 
         <nav className="nav" aria-label="Основная навигация">
-          {LINKS.map((name) => (
-            <a
-              key={name}
-              href="#"
-              className={`nav__link${active === name ? " nav__link--active" : ""}`}
-              aria-current={active === name ? "page" : undefined}
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate(name);
-              }}
+          {LINKS.map(({ label, to }) => (
+            <Link
+              key={label}
+              to={to}
+              className={`nav__link${active === label ? " nav__link--active" : ""}`}
+              aria-current={active === label ? "page" : undefined}
             >
-              {name}
-            </a>
+              {label}
+            </Link>
           ))}
         </nav>
 
         <div className="actions">
-          <a
-            className="actions__login"
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              onAuth();
-            }}
-          >
+          <Link className="actions__login" to="/cabinet">
             Войти
-          </a>
-          <button type="button" className="register" onClick={onAuth}>
+          </Link>
+          <Link className="register" to="/cabinet">
             Регистрация <span className="register__arrow">→</span>
-          </button>
+          </Link>
         </div>
       </header>
     </div>

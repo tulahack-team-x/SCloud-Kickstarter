@@ -1,29 +1,15 @@
-function Footer({ onHome, onGuide }) {
+import { Link } from "react-router-dom";
+
+function Footer({ onGuide }: { onGuide: () => void }) {
   return (
     <footer className="footer">
       <div className="footer__inner">
-        <a
-          className="footer__brand"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onHome();
-          }}
-        >
-          гипотеза<span className="dot">.</span>
-        </a>
-        <span>От хорошего вопроса — к проверяемому результату.</span>
-        <a
-          className="text-link"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            onGuide();
-          }}
-        >
+        <Link className="footer__brand" to="/">
+          SCloud - KickStarter
+        </Link>
+        <button type="button" className="text-link" onClick={onGuide}>
           Как опубликовать исследование
-        </a>
-        <small>Frontend demo · React + Vite</small>
+        </button>
       </div>
     </footer>
   );

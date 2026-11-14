@@ -1,48 +1,43 @@
-import { useState } from "react";
+import { Outlet, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
 
-
-
-interface Page {
-  id:string;
-  Name:"Исследования"|"Организации"|"кабинет";
-  
-}
+import CatalogPage from "./pages/CatalogPage";
+import OrganizationsPage from "./pages/OrganizationsPage";
+import ProjectPage from "./pages/ProjectPage";
+import CabinetPage from "./pages/CabinetPage";
 
 import "./App.css";
 
-function App() {
-
+function AppLayout() {
   return (
     <>
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+    </>
+  );
+}
 
+function NotFoundPage() {
+  return (
+    <section>
+      <h1>Страница не найдена</h1>
+    </section>
+  );
+}
 
-
-<div className="header-wrap" >
-      <header className="header">
-        
-        <button type="button" className="brand" aria-label="Гипотеза — на главную">
-          <span className="brand__name">SCloud - kickStarter</span>
-          <span className="brand__tagline">
-            наука с вашим<br />участием
-          </span>
-        </button>
-
-        <nav className="nav" aria-label="Основная навигация">
-          <a className="nav__link" href="#">Исследования</a>
-          <a className="nav__link" href="#">Организации</a>
-          <a className="nav__link" href="#">Кабинет</a>
-        </nav>
-
-        <div className="actions">
-          <a className="actions__login" href="#">Войти</a>
-          <button type="button" className="register">
-            Регистрация <span className="register__arrow">→</span>
-          </button>
-        </div>
-      </header>
-    </div>
-
-</>
+function App() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<CatalogPage />} />
+        <Route path="projects/:id" element={<ProjectPage />} />
+        <Route path="organizations" element={<OrganizationsPage />} />
+        <Route path="cabinet" element={<CabinetPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }
 
