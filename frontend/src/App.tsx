@@ -2,6 +2,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import CatalogPage from "./pages/CatalogPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
+import OrganizationPage from "./pages/OrganizationPage";
 import ProjectPage from "./pages/ProjectPage";
 import CabinetPage from "./pages/CabinetPage";
 
@@ -33,6 +34,7 @@ function App() {
         <Route index element={<CatalogPage />} />
         <Route path="projects/:id" element={<ProjectPage />} />
         <Route path="organizations" element={<OrganizationsPage />} />
+        <Route path="organizations/:id" element={<OrganizationPage />} />
         <Route path="cabinet" element={<CabinetPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
