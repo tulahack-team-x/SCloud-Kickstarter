@@ -68,12 +68,7 @@ function OrganizationEditForm({
   }
 
   return (
-    <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
-      <h1 className="text-2xl font-black tracking-tight text-stone-950">
-        Редактировать организацию
-      </h1>
-
-      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
         <FormField
           id="organization-name"
           label="Название"
@@ -143,16 +138,15 @@ function OrganizationEditForm({
           </p>
         )}
 
-        <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={submitting}>
-            {submitting ? "Сохраняем..." : "Сохранить"}
-          </Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Отмена
-          </Button>
-        </div>
-      </form>
-    </div>
+      <div className="flex flex-wrap gap-3">
+        <Button type="submit" disabled={submitting}>
+          {submitting ? "Сохраняем..." : "Сохранить"}
+        </Button>
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Отмена
+        </Button>
+      </div>
+    </form>
   );
 }
 

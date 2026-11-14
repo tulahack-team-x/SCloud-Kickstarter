@@ -2,6 +2,7 @@ import { FolderKanban, MapPin, Star, Users } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
 import OrganizationEditForm from "../components/OrganizationEditForm";
 import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
@@ -114,19 +115,6 @@ function OrganizationDetails({ id }: { id: string }) {
     <section>
       <BackLink to="/organizations">Ко всем организациям</BackLink>
 
-      {editing ? (
-        <div className="mt-6">
-          <OrganizationEditForm
-            organization={organization}
-            onSaved={() => {
-              setEditing(false);
-              organizationResource.reload();
-              membersResource.reload();
-            }}
-            onCancel={() => setEditing(false)}
-          />
-        </div>
-      ) : (
       <div className="mt-6 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-wrap items-start gap-5">
           <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-green-100 text-lg font-black text-green-900">
@@ -209,25 +197,11 @@ function OrganizationDetails({ id }: { id: string }) {
           </div>
         </div>
       </div>
-      )}
 
       {requestSent && (
         <p className="mt-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
           Запрос отправлен команде.
         </p>
-      )}
-
-      {requesting && (
-        <div className="mt-6">
-          <ResearchRequestForm
-            organizationId={organization.id}
-            onCreated={() => {
-              setRequesting(false);
-              setRequestSent(true);
-            }}
-            onCancel={() => setRequesting(false)}
-          />
-        </div>
       )}
 
       {(organization.skills || organization.equipment) && (
@@ -331,6 +305,38 @@ function OrganizationDetails({ id }: { id: string }) {
           </section>
         </aside>
       </div>
+
+      <Modal
+        open={editing}
+        onClose={() => setEditing(false)}
+        title="Редактировать организацию"
+      >
+        <OrganizationEditForm
+          organization={organization}
+          onSaved={() => {
+            setEditing(false);
+            organizationResource.reload();
+            membersResource.reload();
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      </Modal>
+
+      <Modal
+        open={requesting}
+        onClose={() => setRequesting(false)}
+        title="Предложить задачу"
+        description="Опишите задачу — команда сможет подготовить предложение."
+      >
+        <ResearchRequestForm
+          organizationId={organization.id}
+          onCreated={() => {
+            setRequesting(false);
+            setRequestSent(true);
+          }}
+          onCancel={() => setRequesting(false)}
+        />
+      </Modal>
     </section>
   );
 }

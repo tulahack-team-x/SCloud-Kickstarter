@@ -73,15 +73,7 @@ function ResearchRequestForm({
   }
 
   return (
-    <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
-      <h2 className="text-2xl font-black tracking-tight text-stone-950">
-        Предложить задачу
-      </h2>
-      <p className="mt-2 text-sm text-stone-500">
-        Опишите задачу — команда сможет подготовить предложение.
-      </p>
-
-      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
         <FormField
           id="request-title"
           label="Название задачи"
@@ -134,16 +126,15 @@ function ResearchRequestForm({
           </p>
         )}
 
-        <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={submitting}>
-            {submitting ? "Отправляем..." : "Отправить запрос"}
-          </Button>
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Отмена
-          </Button>
-        </div>
-      </form>
-    </div>
+      <div className="flex flex-wrap gap-3">
+        <Button type="submit" disabled={submitting}>
+          {submitting ? "Отправляем..." : "Отправить запрос"}
+        </Button>
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Отмена
+        </Button>
+      </div>
+    </form>
   );
 }
 

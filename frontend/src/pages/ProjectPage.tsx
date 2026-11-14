@@ -4,13 +4,18 @@ import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import ContributionForm from "../components/ContributionForm";
+import Modal from "../components/Modal";
 import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
 import { useApiResource } from "../hooks/useApiResource";
 import { useAuth } from "../hooks/useAuth";
 import { apiFetch, getApiErrorMessage } from "../lib/api";
 import { formatDate, formatKopecks } from "../lib/format";
-import { getOrganizationInitials, getOrganizationLocation, getOrganizationTypeLabel } from "../lib/organizations";
+import {
+  getOrganizationInitials,
+  getOrganizationLocation,
+  getOrganizationTypeLabel,
+} from "../lib/organizations";
 import type {
   OrganizationView,
   PageSlice,
@@ -19,7 +24,13 @@ import type {
   ProjectView,
 } from "../types/api";
 
-function InfoBlock({ title, children }: { title: string; children: ReactNode }) {
+function InfoBlock({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
   return (
     <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-stone-950">{title}</h2>
@@ -126,7 +137,7 @@ function ProjectDetails({ id }: { id: string }) {
     <section>
       <BackLink to="/">Ко всем исследованиям</BackLink>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">
           <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
             <div className="flex flex-wrap gap-2">
@@ -134,7 +145,9 @@ function ProjectDetails({ id }: { id: string }) {
                 {project.category}
               </span>
               <span className="rounded-full bg-stone-100 px-3 py-1 text-xs font-bold text-stone-600">
-                {project.status === "PUBLISHED" ? "Опубликован" : project.status}
+                {project.status === "PUBLISHED"
+                  ? "Опубликован"
+                  : project.status}
               </span>
             </div>
 
@@ -154,29 +167,7 @@ function ProjectDetails({ id }: { id: string }) {
                 {organization.name}
               </Link>
             )}
-
-            {user?.role === "CUSTOMER" &&
-              organization &&
-              !showRequest &&
-              !requestSent && (
-                <div className="mt-5">
-                  <Button onClick={() => setShowRequest(true)}>
-                    Предложить задачу
-                  </Button>
-                </div>
-              )}
           </div>
-
-          {showRequest && organization && (
-            <ResearchRequestForm
-              organizationId={organization.id}
-              onCreated={() => {
-                setShowRequest(false);
-                setRequestSent(true);
-              }}
-              onCancel={() => setShowRequest(false)}
-            />
-          )}
 
           {requestSent && (
             <p className="rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
@@ -193,7 +184,9 @@ function ProjectDetails({ id }: { id: string }) {
             <h2 className="text-lg font-bold text-stone-950">Этапы</h2>
 
             {project.stages.length === 0 ? (
-              <p className="mt-3 text-sm text-stone-500">Этапы пока не добавлены.</p>
+              <p className="mt-3 text-sm text-stone-500">
+                Этапы пока не добавлены.
+              </p>
             ) : (
               <ol className="mt-5 space-y-5">
                 {project.stages.map((stage, index) => (
@@ -203,7 +196,9 @@ function ProjectDetails({ id }: { id: string }) {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-2">
-                        <p className="font-semibold text-stone-950">{stage.title}</p>
+                        <p className="font-semibold text-stone-950">
+                          {stage.title}
+                        </p>
                         <span className="text-xs text-stone-500">
                           {stage.weeks} нед.
                         </span>
@@ -322,7 +317,11 @@ function ProjectDetails({ id }: { id: string }) {
             {!user &&
               project.visibility === "PUBLIC" &&
               project.status === "PUBLISHED" && (
-                <Button asChild variant="secondary" className="mt-4 w-full justify-center">
+                <Button
+                  asChild
+                  variant="secondary"
+                  className="mt-4 w-full justify-center"
+                >
                   <Link to="/login">Войти, чтобы поддержать</Link>
                 </Button>
               )}
@@ -354,9 +353,7 @@ function ProjectDetails({ id }: { id: string }) {
                 variant="secondary"
                 className="mt-2 w-full justify-center"
               >
-                <Link to={`/projects/${project.id}/edit`}>
-                  Редактировать
-                </Link>
+                <Link to={`/projects/${project.id}/edit`}>Редактировать</Link>
               </Button>
             </div>
           )}
@@ -385,10 +382,39 @@ function ProjectDetails({ id }: { id: string }) {
                   {getOrganizationLocation(organization)}
                 </p>
               )}
+
+              {user?.role === "CUSTOMER" &&
+                organization &&
+                !showRequest &&
+                !requestSent && (
+                  <div className="mt-5">
+                    <Button onClick={() => setShowRequest(true)}>
+                      Предложить задачу
+                    </Button>
+                  </div>
+                )}
             </div>
           )}
         </aside>
       </div>
+
+      <Modal
+        open={showRequest}
+        onClose={() => setShowRequest(false)}
+        title="Предложить задачу"
+        description="Опишите задачу — команда сможет подготовить предложение."
+      >
+        {organization && (
+          <ResearchRequestForm
+            organizationId={organization.id}
+            onCreated={() => {
+              setShowRequest(false);
+              setRequestSent(true);
+            }}
+            onCancel={() => setShowRequest(false)}
+          />
+        )}
+      </Modal>
     </section>
   );
 }
