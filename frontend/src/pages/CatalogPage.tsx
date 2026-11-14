@@ -5,7 +5,11 @@ import Button from "../components/Button";
 import ProjectCard from "../components/ProjectCard";
 import Spinner from "../components/Spinner";
 import { apiFetch } from "../lib/api";
-import type { OrganizationView, PageSlice, ProjectPageItem } from "../types/api";
+import type {
+  OrganizationView,
+  PageSlice,
+  ProjectPageItem,
+} from "../types/api";
 
 type SortOption = "newest" | "funded" | "contributions";
 
@@ -125,24 +129,12 @@ function CatalogPage() {
     <section>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="mt-2 text-4xl font-black tracking-tight">
-            Исследования
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
-            Поддерживайте научные команды и следите за результатами в понятном
-            формате.
-          </p>
+          <h1 className="text-4xl font-black tracking-tight">Исследования</h1>
         </div>
-
-        {!loading && !error && (
-          <p className="text-sm text-stone-500">
-            Найдено {filtered.length} из {items.length}
-          </p>
-        )}
       </div>
 
       <div className="mt-10 space-y-5">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
           <label className="relative flex-1">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-stone-400" />
             <input
@@ -151,7 +143,7 @@ function CatalogPage() {
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Поиск по названию, описанию или категории"
               aria-label="Поиск исследований"
-              className="w-full rounded-xl border border-stone-200 bg-white py-3 pl-10 pr-10 text-sm text-stone-900 outline-none transition focus:border-green-700"
+              className="focus-ring w-full rounded-xl border border-stone-200 bg-white py-3 pl-10 pr-10 text-sm text-stone-900 transition"
             />
             {query && (
               <button
@@ -163,21 +155,6 @@ function CatalogPage() {
                 <X className="size-4" />
               </button>
             )}
-          </label>
-
-          <label className="flex items-center gap-2 text-sm text-stone-600">
-            <span className="shrink-0">Сортировка</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as SortOption)}
-              className="rounded-xl border border-stone-200 bg-white px-3.5 py-3 text-sm font-semibold text-stone-900 outline-none transition focus:border-green-700"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
           </label>
         </div>
 
@@ -208,15 +185,26 @@ function CatalogPage() {
               Сбросить
             </button>
           )}
+
+          <span className="flex-1"></span>
+
+          <select
+            value={sort}
+            onChange={(event) => setSort(event.target.value as SortOption)}
+            className="focus-ring rounded-xl border border-stone-200 bg-white px-3.5 py-3 text-sm font-semibold text-stone-900 transition"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {loading && (
         <div className="mt-12 flex items-center justify-center">
-          <Spinner
-            className="size-6 text-green-800"
-            label="Загрузка исследований"
-          />
+          <Spinner className="size-6 text-green-800" />
         </div>
       )}
 

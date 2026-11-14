@@ -12,14 +12,6 @@ const VISUALS: Record<string, string> = {
   Космос: "from-sky-100 via-blue-100 to-sky-200",
 };
 
-const BADGES: Record<string, string> = {
-  Медицина: "bg-emerald-300/90 text-emerald-950",
-  Экология: "bg-lime-300/90 text-lime-950",
-  "ИИ и данные": "bg-violet-300/90 text-violet-950",
-  Материалы: "bg-amber-300/90 text-amber-950",
-  Космос: "bg-sky-300/90 text-sky-950",
-};
-
 type ProjectCardProps = ProjectPageItem & {
   teamName?: string;
 };
@@ -51,12 +43,7 @@ function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
         <div className="absolute -right-8 -top-8 size-32 rounded-full bg-white/30" />
         <div className="absolute -bottom-10 -left-6 size-28 rounded-full bg-white/30" />
 
-        <span
-          className={clsx(
-            "absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-bold backdrop-blur",
-            BADGES[project.category] ?? "bg-green-300/90 text-green-950",
-          )}
-        >
+        <span className="absolute left-3 top-3 rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-stone-800 shadow-sm ring-1 ring-black/5">
           {project.category}
         </span>
       </Link>
