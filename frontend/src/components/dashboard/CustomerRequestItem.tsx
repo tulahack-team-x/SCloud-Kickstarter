@@ -65,17 +65,8 @@ function CustomerRequestItem({
       : request.status === "PROPOSED"
         ? "sky"
         : "amber";
-  const accent =
-    request.status === "ACCEPTED"
-      ? "border-l-green-500"
-      : request.status === "PROPOSED"
-        ? "border-l-sky-400"
-        : "border-l-amber-400";
-
   return (
-    <li
-      className={`overflow-hidden rounded-2xl border border-l-4 border-stone-200/80 bg-white p-5 shadow-sm ${accent}`}
-    >
+    <li className="overflow-hidden rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-semibold text-stone-950">{request.title}</p>

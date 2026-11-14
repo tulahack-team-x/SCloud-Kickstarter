@@ -132,13 +132,7 @@ function ResearcherDashboard() {
         <StatCard
           label="Исследования"
           value={projects.length}
-          sub={
-            projects.length === 0
-              ? "пока нет проектов"
-              : publishedProjects === projects.length
-                ? "все опубликованы"
-                : `${publishedProjects} опубликовано`
-          }
+          sub={`${publishedProjects} опубликовано`}
           icon={FlaskConical}
         />
         <StatCard

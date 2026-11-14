@@ -62,6 +62,9 @@ function CustomerDashboard() {
 
   const orders = ordersResource.data?.items ?? [];
   const requests = requestsResource.data?.items ?? [];
+  const openRequests = requests.filter(
+    (request) => request.status !== "ACCEPTED",
+  );
   const organizationNames = new Map(
     (organizationsResource.data?.items ?? []).map((org) => [org.id, org.name]),
   );
@@ -102,8 +105,8 @@ function CustomerDashboard() {
         />
         <StatCard
           label="Принято этапов"
-          value={formatKopecks(acceptedBudget)}
-          sub={`${acceptedStages} из ${totalStages}`}
+          value={acceptedStages}
+          sub={formatKopecks(acceptedBudget)}
           icon={CircleCheck}
         />
         <StatCard label="Всего этапов" value={totalStages} icon={ListChecks} />
@@ -125,11 +128,11 @@ function CustomerDashboard() {
           </Button>
         }
       >
-        {requests.length === 0 ? (
+        {openRequests.length === 0 ? (
           <p className="text-sm text-stone-500">Запросов пока нет.</p>
         ) : (
           <ul className="space-y-4">
-            {requests.map((request) => (
+            {openRequests.map((request) => (
               <CustomerRequestItem
                 key={request.id}
                 request={request}
