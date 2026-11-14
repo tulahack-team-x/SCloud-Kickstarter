@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { Link, useLocation } from "react-router-dom";
 
 const LINKS = [
@@ -47,11 +48,12 @@ function Header() {
                 key={label}
                 to={to}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-md text-sm font-bold transition-colors focus-ring ${
+                className={clsx(
+                  "rounded-md text-sm font-bold transition-colors focus-ring",
                   active
                     ? "text-green-800"
-                    : "text-stone-950 hover:text-green-800"
-                }`}
+                    : "text-stone-950 hover:text-green-800",
+                )}
               >
                 {label}
               </Link>
