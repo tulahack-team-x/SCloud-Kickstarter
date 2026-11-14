@@ -108,8 +108,4 @@
   "name": "Иван Петров",
   "email": "ivan@example.com",
   "role": "CUSTOMER"
-<<<<<<< HEAD
 }``
-=======
-}``
->>>>>>> 3bda8c68b97aac78c42ed1db51a2cedd81d376b0
