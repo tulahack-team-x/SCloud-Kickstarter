@@ -46,17 +46,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  async function hydrateProfile() {
+    const profile = await getMe();
+    setUser(profile.account);
+    setOrganizations(profile.organizations);
+    return profile.account;
+  }
+
   async function register(input: RegisterInput) {
     await registerRequest(input);
-    const account = await loginRequest(input.email, input.password);
-    setUser(account);
-    return account;
+    await loginRequest(input.email, input.password);
+    return hydrateProfile();
   }
 
   async function login(email: string, password: string) {
-    const account = await loginRequest(email, password);
-    setUser(account);
-    return account;
+    await loginRequest(email, password);
+    return hydrateProfile();
   }
 
   async function logout() {

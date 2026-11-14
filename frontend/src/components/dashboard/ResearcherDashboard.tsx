@@ -1,12 +1,15 @@
 import { ClipboardList, FlaskConical, HandCoins, Users } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../Button";
+import RequestProposalForm from "../RequestProposalForm";
 import { useApiResource } from "../../hooks/useApiResource";
 import { useAuth } from "../../hooks/useAuth";
 import { getOrganizationTypeLabel } from "../../lib/organizations";
 import {
   getLabel,
   PROJECT_STATUS_LABELS,
+  REQUEST_STATUS_LABELS,
 } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
 import type {
@@ -15,6 +18,7 @@ import type {
   PageSlice,
   ProjectPageItem,
   ProjectView,
+  ResearchRequestView,
 } from "../../types/api";
 import OrderRow from "./OrderRow";
 import {
@@ -28,6 +32,9 @@ import {
 
 function ResearcherDashboard() {
   const { organizations: ownedOrganizations } = useAuth();
+  const [proposalRequestId, setProposalRequestId] = useState<string | null>(
+    null,
+  );
 
   const projectsResource = useApiResource<PageSlice<ProjectView>>(
     "/me/projects?limit=100",
@@ -40,12 +47,16 @@ function ResearcherDashboard() {
   const organizationsResource = useApiResource<PageSlice<OrganizationView>>(
     "/organizations?limit=100",
   );
+  const requestsResource = useApiResource<PageSlice<ResearchRequestView>>(
+    "/requests?limit=100",
+  );
 
   if (
     projectsResource.loading ||
     catalogResource.loading ||
     ordersResource.loading ||
-    organizationsResource.loading
+    organizationsResource.loading ||
+    requestsResource.loading
   ) {
     return <DashboardLoading />;
   }
@@ -54,7 +65,8 @@ function ResearcherDashboard() {
     projectsResource.error ??
     catalogResource.error ??
     ordersResource.error ??
-    organizationsResource.error;
+    organizationsResource.error ??
+    requestsResource.error;
 
   if (error) {
     return (
@@ -65,6 +77,7 @@ function ResearcherDashboard() {
           catalogResource.reload();
           ordersResource.reload();
           organizationsResource.reload();
+          requestsResource.reload();
         }}
       />
     );
@@ -72,6 +85,12 @@ function ResearcherDashboard() {
 
   const projects = projectsResource.data?.items ?? [];
   const orders = ordersResource.data?.items ?? [];
+  const ownedOrganizationIds = new Set(
+    ownedOrganizations.map((organization) => organization.id),
+  );
+  const incomingRequests = (requestsResource.data?.items ?? []).filter(
+    (request) => ownedOrganizationIds.has(request.organizationId),
+  );
   const fundingByProject = new Map(
     (catalogResource.data?.items ?? []).map(({ project, funding }) => [
       project.id,
@@ -212,6 +231,78 @@ function ResearcherDashboard() {
                 order={order}
                 organizationName={organizationNames.get(order.organizationId)}
               />
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      <Section title="Входящие запросы">
+        {incomingRequests.length === 0 ? (
+          <p className="text-sm text-stone-500">Запросов пока нет.</p>
+        ) : (
+          <ul className="divide-y divide-stone-100">
+            {incomingRequests.map((request) => (
+              <li
+                key={request.id}
+                className="py-4 first:pt-0 last:pb-0"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-stone-950">
+                      {request.title}
+                    </p>
+                    <p className="mt-1 text-xs text-stone-500">
+                      {organizationNames.get(request.organizationId) ??
+                        "Организация"}{" "}
+                      · {request.weeks} нед.
+                    </p>
+                    <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone-600">
+                      {request.description}
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="font-bold text-stone-950">
+                      {formatKopecks(request.budgetKopecks)}
+                    </p>
+                    <div className="mt-1">
+                      <Badge
+                        tone={
+                          request.status === "SENT"
+                            ? "amber"
+                            : request.status === "ACCEPTED"
+                              ? "green"
+                              : "sky"
+                        }
+                      >
+                        {getLabel(REQUEST_STATUS_LABELS, request.status)}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {request.status === "SENT" &&
+                  proposalRequestId !== request.id && (
+                    <Button
+                      compact
+                      className="mt-3"
+                      onClick={() => setProposalRequestId(request.id)}
+                    >
+                      Подготовить предложение
+                    </Button>
+                  )}
+
+                {proposalRequestId === request.id && (
+                  <RequestProposalForm
+                    request={request}
+                    onSubmitted={() => {
+                      setProposalRequestId(null);
+                      requestsResource.reload();
+                    }}
+                    onCancel={() => setProposalRequestId(null)}
+                  />
+                )}
+              </li>
             ))}
           </ul>
         )}

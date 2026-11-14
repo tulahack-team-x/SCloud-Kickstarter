@@ -1,8 +1,13 @@
 import { Building2, HandCoins, Users } from "lucide-react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
+import Button from "../components/Button";
+import ContributionForm from "../components/ContributionForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
 import { useApiResource } from "../hooks/useApiResource";
+import { useAuth } from "../hooks/useAuth";
+import { apiFetch, getApiErrorMessage } from "../lib/api";
 import { formatDate, formatKopecks } from "../lib/format";
 import { getOrganizationInitials, getOrganizationLocation, getOrganizationTypeLabel } from "../lib/organizations";
 import type {
@@ -10,6 +15,7 @@ import type {
   PageSlice,
   ProjectPageItem,
   ProjectUpdateView,
+  ProjectView,
 } from "../types/api";
 
 function InfoBlock({ title, children }: { title: string; children: ReactNode }) {
@@ -24,6 +30,12 @@ function InfoBlock({ title, children }: { title: string; children: ReactNode }) 
 }
 
 function ProjectDetails({ id }: { id: string }) {
+  const { user, organizations: ownedOrganizations } = useAuth();
+  const [showSupport, setShowSupport] = useState(false);
+  const [supportThanks, setSupportThanks] = useState(false);
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+
   const projectResource = useApiResource<ProjectPageItem>(`/projects/${id}`);
   const updatesResource = useApiResource<PageSlice<ProjectUpdateView>>(
     `/projects/${id}/updates?limit=20`,
@@ -75,6 +87,37 @@ function ProjectDetails({ id }: { id: string }) {
     goalKopecks > 0
       ? Math.min(100, Math.round((funding.amountKopecks / goalKopecks) * 100))
       : 0;
+  const isOwner =
+    !!user &&
+    ownedOrganizations.some(
+      (ownedOrganization) => ownedOrganization.id === project.organizationId,
+    );
+  const canSupport =
+    !!user &&
+    user.role === "SPONSOR" &&
+    project.visibility === "PUBLIC" &&
+    project.status === "PUBLISHED";
+
+  async function publishProject() {
+    setPublishing(true);
+    setPublishError(null);
+
+    try {
+      await apiFetch<ProjectView>(`/projects/${project.id}/publication`, {
+        method: "POST",
+        body: JSON.stringify({ expectedVersion: project.version }),
+      });
+
+      projectResource.reload();
+      updatesResource.reload();
+    } catch (err) {
+      setPublishError(
+        getApiErrorMessage(err, "Не удалось опубликовать проект"),
+      );
+    } finally {
+      setPublishing(false);
+    }
+  }
 
   return (
     <section>
@@ -213,7 +256,69 @@ function ProjectDetails({ id }: { id: string }) {
                 {funding.contributors}
               </span>
             </div>
+
+            {supportThanks && (
+              <p className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-800">
+                Спасибо за поддержку!
+              </p>
+            )}
+
+            {canSupport && (
+              <div className="mt-4">
+                {showSupport ? (
+                  <ContributionForm
+                    projectId={project.id}
+                    onContributed={() => {
+                      setShowSupport(false);
+                      setSupportThanks(true);
+                      projectResource.reload();
+                    }}
+                  />
+                ) : (
+                  <Button
+                    className="w-full justify-center"
+                    onClick={() => {
+                      setShowSupport(true);
+                      setSupportThanks(false);
+                    }}
+                  >
+                    Поддержать проект
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {!user &&
+              project.visibility === "PUBLIC" &&
+              project.status === "PUBLISHED" && (
+                <Button asChild variant="secondary" className="mt-4 w-full justify-center">
+                  <Link to="/login">Войти, чтобы поддержать</Link>
+                </Button>
+              )}
           </div>
+
+          {isOwner && project.status === "DRAFT" && (
+            <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+              <p className="text-sm font-bold text-stone-950">
+                Проект не опубликован
+              </p>
+              <p className="mt-1 text-xs leading-5 text-stone-500">
+                Опубликуйте проект, чтобы он появился в каталоге.
+              </p>
+
+              {publishError && (
+                <p className="mt-3 text-xs text-red-600">{publishError}</p>
+              )}
+
+              <Button
+                className="mt-4 w-full justify-center"
+                disabled={publishing}
+                onClick={() => void publishProject()}
+              >
+                {publishing ? "Публикуем..." : "Опубликовать"}
+              </Button>
+            </div>
+          )}
 
           {organization && (
             <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">

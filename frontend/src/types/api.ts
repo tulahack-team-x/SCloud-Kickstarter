@@ -176,3 +176,33 @@ export interface ReviewView {
   text: string;
   createdAt: string;
 }
+
+
+export interface ResearchRequestView {
+  id: string;
+  customerId: string;
+  organizationId: string;
+  title: string;
+  description: string;
+  budgetKopecks: number;
+  weeks: number;
+  status: string;
+  version: number;
+  createdAt: string;
+}
+
+export interface ProposalStageDraft {
+  title: string;
+  result: string;
+  acceptance: string;
+  weeks: number;
+  budgetKopecks: number;
+}
+
+export interface ProposalView {
+  id: string;
+  requestId: string;
+  text: string;
+  createdAt: string;
+  stages: ProposalStageDraft[];
+}

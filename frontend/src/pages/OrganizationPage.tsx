@@ -1,8 +1,13 @@
 import { FolderKanban, MapPin, Star, Users } from "lucide-react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
+import Button from "../components/Button";
+import OrganizationEditForm from "../components/OrganizationEditForm";
+import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
 import ProjectCard from "../components/ProjectCard";
 import { useApiResource } from "../hooks/useApiResource";
+import { useAuth } from "../hooks/useAuth";
 import { formatDate } from "../lib/format";
 import {
   getOrganizationInitials,
@@ -32,6 +37,11 @@ function Rating({ value }: { value: number }) {
 }
 
 function OrganizationDetails({ id }: { id: string }) {
+  const { user, organizations: ownedOrganizations } = useAuth();
+  const [editing, setEditing] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+
   const organizationResource = useApiResource<OrganizationView>(
     `/organizations/${id}`,
   );
@@ -93,11 +103,30 @@ function OrganizationDetails({ id }: { id: string }) {
         ).toFixed(1)
       : null;
   const location = getOrganizationLocation(organization);
+  const isOwner =
+    !!user &&
+    ownedOrganizations.some(
+      (ownedOrganization) => ownedOrganization.id === organization.id,
+    );
+  const isCustomer = user?.role === "CUSTOMER";
 
   return (
     <section>
       <BackLink to="/organizations">Ко всем организациям</BackLink>
 
+      {editing ? (
+        <div className="mt-6">
+          <OrganizationEditForm
+            organization={organization}
+            onSaved={() => {
+              setEditing(false);
+              organizationResource.reload();
+              membersResource.reload();
+            }}
+            onCancel={() => setEditing(false)}
+          />
+        </div>
+      ) : (
       <div className="mt-6 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
         <div className="flex flex-wrap items-start gap-5">
           <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-green-100 text-lg font-black text-green-900">
@@ -133,6 +162,25 @@ function OrganizationDetails({ id }: { id: string }) {
               </p>
             )}
           </div>
+
+          {isOwner && (
+            <Button variant="secondary" onClick={() => setEditing(true)}>
+              Редактировать
+            </Button>
+          )}
+
+          {isCustomer &&
+            organization.type === "SCIENTIFIC" &&
+            !requesting && (
+              <Button
+                onClick={() => {
+                  setRequesting(true);
+                  setRequestSent(false);
+                }}
+              >
+                Предложить задачу
+              </Button>
+            )}
         </div>
 
         <div className="mt-6 grid gap-3 border-t border-stone-100 pt-5 text-sm sm:grid-cols-3">
@@ -161,6 +209,26 @@ function OrganizationDetails({ id }: { id: string }) {
           </div>
         </div>
       </div>
+      )}
+
+      {requestSent && (
+        <p className="mt-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
+          Запрос отправлен команде.
+        </p>
+      )}
+
+      {requesting && (
+        <div className="mt-6">
+          <ResearchRequestForm
+            organizationId={organization.id}
+            onCreated={() => {
+              setRequesting(false);
+              setRequestSent(true);
+            }}
+            onCancel={() => setRequesting(false)}
+          />
+        </div>
+      )}
 
       {(organization.skills || organization.equipment) && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">

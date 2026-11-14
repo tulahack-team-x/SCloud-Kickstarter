@@ -15,6 +15,12 @@ export const CONTRIBUTION_STATUS_LABELS: Record<string, string> = {
   CONFIRMED: "Подтверждён",
 };
 
+export const REQUEST_STATUS_LABELS: Record<string, string> = {
+  SENT: "Новый",
+  PROPOSED: "Предложение отправлено",
+  ACCEPTED: "Принят",
+};
+
 export const STAGE_STATUS_LABELS: Record<string, string> = {
   PLANNED: "Запланирован",
   WORKING: "В работе",
