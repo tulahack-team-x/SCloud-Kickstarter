@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import { Link, useLocation } from "react-router-dom";
+import Button from "./Button";
+import { ArrowRight } from "lucide-react";
 
 const LINKS = [
   {
@@ -68,13 +70,12 @@ function Header() {
           >
             Войти
           </Link>
-          <Link
-            to="/cabinet"
-            className="inline-flex items-center gap-2 rounded-lg bg-green-800 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-green-900 focus-ring"
-          >
-            Регистрация
-            <span>→</span>
-          </Link>
+          <Button asChild>
+            <Link to="/cabinet">
+              Регистрация
+              <ArrowRight size={16} strokeWidth={3} />
+            </Link>
+          </Button>
         </div>
       </div>
     </header>
