@@ -1,18 +1,22 @@
 import clsx from "clsx";
-import { HandCoins, Users } from "lucide-react";
+import { Building2, HandCoins, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatKopecks } from "../lib/format";
 import type { ProjectPageItem } from "../types/api";
 
 const VISUALS: Record<string, string> = {
-  Медицина: "from-emerald-500 to-teal-700",
-  Экология: "from-lime-500 to-green-700",
-  "ИИ и данные": "from-violet-500 to-indigo-700",
-  Материалы: "from-amber-400 to-orange-600",
-  Космос: "from-sky-500 to-blue-800",
+  Медицина: "from-emerald-100 via-teal-100 to-emerald-200",
+  Экология: "from-lime-100 via-green-100 to-lime-200",
+  "ИИ и данные": "from-violet-100 via-purple-100 to-violet-200",
+  Материалы: "from-amber-100 via-orange-100 to-amber-200",
+  Космос: "from-sky-100 via-blue-100 to-sky-200",
 };
 
-function ProjectCard({ project, funding }: ProjectPageItem) {
+type ProjectCardProps = ProjectPageItem & {
+  teamName?: string;
+};
+
+function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
   const projectPath = `/projects/${project.id}`;
   const goalKopecks = project.stages.reduce(
     (total, stage) => total + stage.budgetKopecks,
@@ -24,27 +28,27 @@ function ProjectCard({ project, funding }: ProjectPageItem) {
       : 0;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <Link
         to={projectPath}
-        className="relative block h-36 overflow-hidden bg-gradient-to-br"
+        className="relative block h-40 overflow-hidden bg-gradient-to-br"
         aria-label={`Открыть проект «${project.title}»`}
       >
         <div
           className={clsx(
             "absolute inset-0 bg-gradient-to-br",
-            VISUALS[project.category] ?? "from-green-600 to-green-900",
+            VISUALS[project.category] ?? "from-green-100 to-green-200",
           )}
         />
-        <div className="absolute -right-8 -top-8 size-32 rounded-full bg-white/10" />
-        <div className="absolute -bottom-10 -left-6 size-28 rounded-full bg-white/10" />
+        <div className="absolute -right-8 -top-8 size-32 rounded-full bg-white/30" />
+        <div className="absolute -bottom-10 -left-6 size-28 rounded-full bg-white/30" />
 
-        <span className="absolute left-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur">
+        <span className="absolute left-5 top-5 rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-stone-800 shadow-sm ring-1 ring-black/5 backdrop-blur">
           {project.category}
         </span>
       </Link>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-6">
         <h2 className="text-xl font-bold leading-tight text-stone-950">
           <Link
             to={projectPath}
@@ -58,7 +62,14 @@ function ProjectCard({ project, funding }: ProjectPageItem) {
           {project.summary}
         </p>
 
-        <div className="mt-auto pt-6">
+        <div className="mt-auto pt-7">
+          {teamName && (
+            <p className="mb-5 flex items-center gap-1.5 text-xs font-semibold text-stone-500">
+              <Building2 className="size-3.5" aria-hidden="true" />
+              {teamName}
+            </p>
+          )}
+
           <div className="flex items-end justify-between gap-3">
             <div>
               <p className="text-lg font-black text-stone-950">
@@ -74,7 +85,7 @@ function ProjectCard({ project, funding }: ProjectPageItem) {
           </div>
 
           <div
-            className="mt-2 h-2 overflow-hidden rounded-full bg-stone-100"
+            className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone-100"
             role="meter"
             aria-label="Сбор средств"
             aria-valuemin={0}
@@ -82,7 +93,7 @@ function ProjectCard({ project, funding }: ProjectPageItem) {
             aria-valuenow={progress}
           >
             <div
-              className="h-full rounded-full bg-green-700 transition-[width]"
+              className="h-full rounded-full bg-green-600 transition-[width]"
               style={{ width: `${progress}%` }}
             />
           </div>
