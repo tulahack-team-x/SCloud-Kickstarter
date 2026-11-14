@@ -8,7 +8,13 @@ import {
   getOrderBudgetKopecks,
 } from "../../lib/dashboard";
 import { formatKopecks } from "../../lib/format";
-import type { OrderView, OrganizationView, PageSlice } from "../../types/api";
+import type {
+  OrderView,
+  OrganizationView,
+  PageSlice,
+  ResearchRequestView,
+} from "../../types/api";
+import CustomerRequestItem from "./CustomerRequestItem";
 import OrderRow from "./OrderRow";
 import {
   DashboardError,
@@ -24,12 +30,22 @@ function CustomerDashboard() {
   const organizationsResource = useApiResource<PageSlice<OrganizationView>>(
     "/organizations?limit=100",
   );
+  const requestsResource = useApiResource<PageSlice<ResearchRequestView>>(
+    "/requests?limit=100",
+  );
 
-  if (ordersResource.loading || organizationsResource.loading) {
+  if (
+    ordersResource.loading ||
+    organizationsResource.loading ||
+    requestsResource.loading
+  ) {
     return <DashboardLoading />;
   }
 
-  const error = ordersResource.error ?? organizationsResource.error;
+  const error =
+    ordersResource.error ??
+    organizationsResource.error ??
+    requestsResource.error;
 
   if (error) {
     return (
@@ -38,12 +54,14 @@ function CustomerDashboard() {
         onRetry={() => {
           ordersResource.reload();
           organizationsResource.reload();
+          requestsResource.reload();
         }}
       />
     );
   }
 
   const orders = ordersResource.data?.items ?? [];
+  const requests = requestsResource.data?.items ?? [];
   const organizationNames = new Map(
     (organizationsResource.data?.items ?? []).map((org) => [org.id, org.name]),
   );
@@ -100,7 +118,36 @@ function CustomerDashboard() {
       </Section>
 
       <Section
-        title="Мои заказы"
+        title="Мои запросы"
+        action={
+          <Button asChild variant="secondary" compact>
+            <Link to="/organizations">Найти команду</Link>
+          </Button>
+        }
+      >
+        {requests.length === 0 ? (
+          <p className="text-sm text-stone-500">Запросов пока нет.</p>
+        ) : (
+          <ul className="space-y-4">
+            {requests.map((request) => (
+              <CustomerRequestItem
+                key={request.id}
+                request={request}
+                organizationName={organizationNames.get(
+                  request.organizationId,
+                )}
+                onAccepted={() => {
+                  requestsResource.reload();
+                  ordersResource.reload();
+                }}
+              />
+            ))}
+          </ul>
+        )}
+      </Section>
+
+      <Section
+        title="Заказы в работе"
         action={
           <Button asChild variant="secondary" compact>
             <Link to="/">Найти исследования</Link>
@@ -116,6 +163,7 @@ function CustomerDashboard() {
                 key={order.id}
                 order={order}
                 organizationName={organizationNames.get(order.organizationId)}
+                showStages
               />
             ))}
           </ul>

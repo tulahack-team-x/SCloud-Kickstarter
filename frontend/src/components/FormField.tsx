@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type {
   InputHTMLAttributes,
+  SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
 
@@ -89,6 +90,39 @@ export function TextareaField({
         )}
         {...props}
       />
+      <FieldMessages hint={hint} error={error} />
+    </div>
+  );
+}
+
+
+type SelectFieldProps = SelectHTMLAttributes<HTMLSelectElement> &
+  FieldShellProps;
+
+export function SelectField({
+  label,
+  id,
+  hint,
+  error,
+  className,
+  children,
+  ...props
+}: SelectFieldProps) {
+  return (
+    <div>
+      <FieldLabel id={id} label={label} />
+      <select
+        id={id}
+        aria-invalid={error ? true : undefined}
+        className={clsx(
+          "focus-ring w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 transition",
+          error && "border-red-300",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </select>
       <FieldMessages hint={hint} error={error} />
     </div>
   );

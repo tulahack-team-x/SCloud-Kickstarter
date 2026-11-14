@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import ContributionForm from "../components/ContributionForm";
+import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
 import { useApiResource } from "../hooks/useApiResource";
 import { useAuth } from "../hooks/useAuth";
@@ -35,6 +36,8 @@ function ProjectDetails({ id }: { id: string }) {
   const [supportThanks, setSupportThanks] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [showRequest, setShowRequest] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
 
   const projectResource = useApiResource<ProjectPageItem>(`/projects/${id}`);
   const updatesResource = useApiResource<PageSlice<ProjectUpdateView>>(
@@ -151,7 +154,35 @@ function ProjectDetails({ id }: { id: string }) {
                 {organization.name}
               </Link>
             )}
+
+            {user?.role === "CUSTOMER" &&
+              organization &&
+              !showRequest &&
+              !requestSent && (
+                <div className="mt-5">
+                  <Button onClick={() => setShowRequest(true)}>
+                    Предложить задачу
+                  </Button>
+                </div>
+              )}
           </div>
+
+          {showRequest && organization && (
+            <ResearchRequestForm
+              organizationId={organization.id}
+              onCreated={() => {
+                setShowRequest(false);
+                setRequestSent(true);
+              }}
+              onCancel={() => setShowRequest(false)}
+            />
+          )}
+
+          {requestSent && (
+            <p className="rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-semibold text-green-800">
+              Запрос отправлен команде.
+            </p>
+          )}
 
           <InfoBlock title="Гипотеза">{project.hypothesis}</InfoBlock>
           <InfoBlock title="Методика">{project.method}</InfoBlock>
@@ -316,6 +347,16 @@ function ProjectDetails({ id }: { id: string }) {
                 onClick={() => void publishProject()}
               >
                 {publishing ? "Публикуем..." : "Опубликовать"}
+              </Button>
+
+              <Button
+                asChild
+                variant="secondary"
+                className="mt-2 w-full justify-center"
+              >
+                <Link to={`/projects/${project.id}/edit`}>
+                  Редактировать
+                </Link>
               </Button>
             </div>
           )}

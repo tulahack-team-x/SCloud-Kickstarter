@@ -132,7 +132,13 @@ function ResearcherDashboard() {
         <StatCard
           label="Исследования"
           value={projects.length}
-          sub={`${publishedProjects} опубликовано`}
+          sub={
+            projects.length === 0
+              ? "пока нет проектов"
+              : publishedProjects === projects.length
+                ? "все опубликованы"
+                : `${publishedProjects} опубликовано`
+          }
           icon={FlaskConical}
         />
         <StatCard
@@ -168,9 +174,14 @@ function ResearcherDashboard() {
       <Section
         title="Мои исследования"
         action={
-          <Button asChild variant="secondary" compact>
-            <Link to="/">Каталог</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild compact>
+              <Link to="/projects/new">Новое исследование</Link>
+            </Button>
+            <Button asChild variant="secondary" compact>
+              <Link to="/">Каталог</Link>
+            </Button>
+          </div>
         }
       >
         {projects.length === 0 ? (
@@ -212,6 +223,14 @@ function ResearcherDashboard() {
                         {getLabel(PROJECT_STATUS_LABELS, project.status)}
                       </Badge>
                     </div>
+                    {project.status === "DRAFT" && (
+                      <Link
+                        to={`/projects/${project.id}/edit`}
+                        className="mt-2 inline-block text-xs font-semibold text-green-800 hover:underline"
+                      >
+                        Редактировать
+                      </Link>
+                    )}
                   </div>
                 </li>
               );

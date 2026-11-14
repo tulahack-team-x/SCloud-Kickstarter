@@ -6,6 +6,7 @@ import OrganizationPage from "./pages/OrganizationPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 import ProjectPage from "./pages/ProjectPage";
+import ProjectFormPage from "./pages/ProjectFormPage";
 import CabinetPage from "./pages/CabinetPage";
 
 function AppLayout() {
@@ -34,6 +35,8 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<CatalogPage />} />
+        <Route path="projects/new" element={<ProjectFormPage />} />
+        <Route path="projects/:id/edit" element={<ProjectFormPage />} />
         <Route path="projects/:id" element={<ProjectPage />} />
         <Route path="organizations" element={<OrganizationsPage />} />
         <Route path="organizations/:id" element={<OrganizationPage />} />
