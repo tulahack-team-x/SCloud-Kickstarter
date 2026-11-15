@@ -29,7 +29,7 @@ function ProjectCard({ project, funding, teamName }: ProjectCardProps) {
       : 0;
 
   return (
-    <article className="group relative h-full overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm transition duration-200 hover:brightness-[98%] hover:shadow-md">
+    <article className="group relative h-full overflow-hidden card transition duration-200 hover:brightness-[98%] hover:shadow-md">
       <Link
         to={projectPath}
         aria-label={`Открыть проект «${project.title}»`}

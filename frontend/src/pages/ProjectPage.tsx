@@ -32,7 +32,7 @@ function InfoBlock({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+    <section className="card p-6">
       <h2 className="text-lg font-bold text-stone-950">{title}</h2>
       <div className="mt-3 whitespace-pre-line text-sm leading-7 text-stone-600">
         {children}
@@ -139,7 +139,7 @@ function ProjectDetails({ id }: { id: string }) {
 
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">
-          <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
+          <div className="card p-6 sm:p-8">
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-green-800">
                 {project.category}
@@ -180,7 +180,7 @@ function ProjectDetails({ id }: { id: string }) {
           <InfoBlock title="Ожидаемый результат">{project.result}</InfoBlock>
           <InfoBlock title="Риски">{project.risks}</InfoBlock>
 
-          <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="text-lg font-bold text-stone-950">Этапы</h2>
 
             {project.stages.length === 0 ? (
@@ -216,7 +216,7 @@ function ProjectDetails({ id }: { id: string }) {
             )}
           </section>
 
-          <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="text-lg font-bold text-stone-950">Обновления</h2>
 
             {updates.length === 0 ? (
@@ -254,7 +254,7 @@ function ProjectDetails({ id }: { id: string }) {
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <div className="card p-6">
             <p className="text-2xl font-black text-stone-950">
               {formatKopecks(funding.amountKopecks)}
             </p>
@@ -325,7 +325,7 @@ function ProjectDetails({ id }: { id: string }) {
           </div>
 
           {isOwner && project.status === "DRAFT" && (
-            <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+            <div className="card p-6">
               <p className="text-sm font-bold text-stone-950">
                 Проект не опубликован
               </p>
@@ -356,7 +356,7 @@ function ProjectDetails({ id }: { id: string }) {
           )}
 
           {organization && (
-            <div className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+            <div className="card p-6">
               <div className="flex items-start gap-3">
                 <OrganizationIcon
                   type={organization.type}

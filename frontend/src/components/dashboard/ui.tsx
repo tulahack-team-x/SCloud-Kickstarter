@@ -14,7 +14,7 @@ type StatCardProps = {
 
 export function StatCard({ label, value, sub, icon: Icon }: StatCardProps) {
   return (
-    <div className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm">
+    <div className="card p-5">
       <div className="flex items-start justify-between gap-3">
         <span className="text-sm font-medium text-stone-500">{label}</span>
         {Icon && <Icon className="size-5 text-stone-400" aria-hidden="true" />}
@@ -33,7 +33,7 @@ type SectionProps = {
 
 export function Section({ title, action, children }: SectionProps) {
   return (
-    <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+    <section className="card p-6">
       <div className="flex flex-wrap justify-between gap-3">
         <h2 className="text-lg font-bold text-stone-950">{title}</h2>
         {action}
