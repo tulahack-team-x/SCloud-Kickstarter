@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 import { ApiError, apiFetch, getApiErrorMessage } from "../lib/api";
 import type { ContributionView } from "../types/api";
@@ -16,7 +16,6 @@ function ContributionForm({ projectId, onContributed }: ContributionFormProps) {
   const [amount, setAmount] = useState("500");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const attempt = useRef<{ amount: number; key: string } | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,19 +35,13 @@ function ContributionForm({ projectId, onContributed }: ContributionFormProps) {
     setSubmitting(true);
     setError(null);
 
-    if (!attempt.current || attempt.current.amount !== amountKopecks) {
-      const bytes = crypto.getRandomValues(new Uint8Array(16));
-      attempt.current = { amount: amountKopecks,
-        key: Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("") };
-    }
-
     try {
       const contribution = await apiFetch<ContributionView>(
         `/projects/${projectId}/contributions`,
         {
           method: "POST",
           headers: {
-            "Idempotency-Key": attempt.current.key,
+            "Idempotency-Key": crypto.randomUUID(),
           },
           body: JSON.stringify({ amountKopecks }),
         },
@@ -64,7 +57,6 @@ function ContributionForm({ projectId, onContributed }: ContributionFormProps) {
           if (!(err instanceof ApiError && err.status === 404)) {
             throw err;
           }
-          throw new Error("Взнос создан и ожидает подтверждения. Платёжный сервис не подключён.");
         }
       }
 
@@ -78,7 +70,6 @@ function ContributionForm({ projectId, onContributed }: ContributionFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-4 border-t border-stone-100 pt-4">
-      <p className="text-xs text-stone-500">Тестовый взнос: реальные деньги не списываются.</p>
       <div className="flex flex-wrap gap-2">
         {PRESETS.map((preset) => (
           <button

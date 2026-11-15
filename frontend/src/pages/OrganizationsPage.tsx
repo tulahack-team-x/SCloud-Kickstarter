@@ -5,15 +5,12 @@ import IconButton from "../components/IconButton";
 import CategoryButton from "../components/CategoryButton";
 import OrganizationCard from "../components/OrganizationCard";
 import Spinner from "../components/Spinner";
-import TeamRecommendation from "../components/TeamRecommendation";
-import { useAuth } from "../hooks/useAuth";
 import { useOrganizationsData } from "../hooks/useOrganizationsData";
 import { getOrganizationTypeLabel } from "../lib/organizations";
 
 const ALL_TYPES = "Все";
 
 function OrganizationsPage() {
-  const { user } = useAuth();
   const { organizations, loading, error, reload } = useOrganizationsData();
 
   const [query, setQuery] = useState("");
@@ -58,7 +55,6 @@ function OrganizationsPage() {
         <h1 className="text-4xl font-black tracking-tight">Организации</h1>
       </div>
 
-      {user && user.role !== "RESEARCHER" && <TeamRecommendation />}
       <div className="mt-10 space-y-5">
         <label className="relative block">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-stone-400" />

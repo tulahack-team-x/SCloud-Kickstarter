@@ -62,16 +62,14 @@ export async function apiFetch<T>(
     headers.set("Accept", "application/json");
   }
 
-  if (options.body instanceof URLSearchParams) {
+  if (options.body instanceof FormData) {
+    // Let the browser set the multipart boundary.
+  } else if (options.body instanceof URLSearchParams) {
     headers.set(
       "Content-Type",
       "application/x-www-form-urlencoded;charset=UTF-8",
     );
-  } else if (
-    options.body !== undefined &&
-    !(options.body instanceof FormData) &&
-    !headers.has("Content-Type")
-  ) {
+  } else if (options.body !== undefined && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 

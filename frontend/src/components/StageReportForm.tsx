@@ -4,7 +4,6 @@ import { apiFetch, getApiErrorMessage } from "../lib/api";
 import type { OrderStageView, ReportView } from "../types/api";
 import Button from "./Button";
 import { FormField, TextareaField } from "./FormField";
-import AttachmentPicker from "./AttachmentPicker";
 
 type StageReportFormProps = {
   orderId: string;
@@ -27,8 +26,6 @@ function StageReportForm({
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [attachmentIds, setAttachmentIds] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
 
   function updateField(field: keyof typeof form, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -49,7 +46,7 @@ function StageReportForm({
             work: form.work.trim(),
             conclusion: form.conclusion.trim(),
             limitations: form.limitations.trim(),
-            attachmentIds,
+            attachmentIds: [],
             expectedVersion: stage.version,
           }),
         },
@@ -103,11 +100,10 @@ function StageReportForm({
         required
       />
 
-      <AttachmentPicker orderId={orderId} onChange={setAttachmentIds} onBusy={setUploading} />
       {error && <p className="text-xs text-red-600">{error}</p>}
 
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={submitting || uploading}>
+        <Button type="submit" disabled={submitting}>
           {submitting ? "Отправляем..." : "Сдать этап на проверку"}
         </Button>
         <Button type="button" variant="secondary" onClick={onCancel}>

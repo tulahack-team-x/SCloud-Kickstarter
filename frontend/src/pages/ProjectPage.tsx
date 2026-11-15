@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import ContributionForm from "../components/ContributionForm";
-import ProjectUpdateForm from "../components/ProjectUpdateForm";
 import Modal from "../components/Modal";
 import ResearchRequestForm from "../components/ResearchRequestForm";
 import { BackLink, PageError, PageLoading } from "../components/PageState";
@@ -219,7 +218,6 @@ function ProjectDetails({ id }: { id: string }) {
 
           <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-bold text-stone-950">Обновления</h2>
-            {isOwner && project.status === "PUBLISHED" && <ProjectUpdateForm project={project} onSaved={updatesResource.reload} />}
 
             {updates.length === 0 ? (
               <p className="mt-3 text-sm text-stone-500">

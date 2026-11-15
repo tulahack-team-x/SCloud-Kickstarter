@@ -7,7 +7,7 @@ import java.util.Map;
 
 @RestController
 public class ServiceController {
-    @GetMapping("/api/health")
+    @GetMapping("/")
     public Map<String, String> info() {
         return Map.of(
                 "service",
