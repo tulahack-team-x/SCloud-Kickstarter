@@ -114,7 +114,7 @@ function OrganizationDetails({ id }: { id: string }) {
     <section>
       <BackLink to="/organizations">Ко всем организациям</BackLink>
 
-      <div className="mt-6 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm sm:p-8">
+      <div className="mt-6 card p-6 sm:p-8">
         <div className="flex flex-wrap items-start gap-5">
           <OrganizationIcon type={organization.type} className="size-16" />
 
@@ -206,7 +206,7 @@ function OrganizationDetails({ id }: { id: string }) {
       {(organization.skills || organization.equipment) && (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {organization.skills && (
-            <div className="rounded-2xl border border-stone-200/80 bg-white p-5">
+            <div className="card p-5">
               <p className="text-xs font-bold uppercase tracking-wide text-stone-500">
                 Навыки
               </p>
@@ -216,7 +216,7 @@ function OrganizationDetails({ id }: { id: string }) {
             </div>
           )}
           {organization.equipment && (
-            <div className="rounded-2xl border border-stone-200/80 bg-white p-5">
+            <div className="card p-5">
               <p className="text-xs font-bold uppercase tracking-wide text-stone-500">
                 Оборудование
               </p>
@@ -251,7 +251,7 @@ function OrganizationDetails({ id }: { id: string }) {
             )}
           </section>
 
-          <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="text-lg font-bold text-stone-950">Отзывы</h2>
 
             {reviews.length === 0 ? (
@@ -280,7 +280,7 @@ function OrganizationDetails({ id }: { id: string }) {
         </div>
 
         <aside className="space-y-6">
-          <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <section className="card p-6">
             <h2 className="text-lg font-bold text-stone-950">Участники</h2>
 
             {members.length === 0 ? (

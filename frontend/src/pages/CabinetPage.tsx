@@ -22,7 +22,7 @@ function CabinetPage() {
     return (
       <section className="mx-auto max-w-2xl">
         <h1 className="text-4xl font-black tracking-tight">Кабинет</h1>
-        <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-8">
+        <div className="card mt-8 p-8">
           <p className="text-sm text-stone-600">
             Войдите или создайте профиль, чтобы продолжить.
           </p>

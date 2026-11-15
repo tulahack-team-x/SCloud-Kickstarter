@@ -116,7 +116,7 @@ function OrganizationsPage() {
       )}
 
       {!loading && !error && organizations.length === 0 && (
-        <div className="mt-12 rounded-2xl border border-stone-200 bg-white p-10 text-center">
+        <div className="card mt-12 p-10 text-center">
           <p className="font-bold text-stone-900">Пока нет организаций</p>
           <p className="mt-1 text-sm text-stone-500">
             Как только команды появятся, они будут здесь.
@@ -128,7 +128,7 @@ function OrganizationsPage() {
         !error &&
         organizations.length > 0 &&
         filtered.length === 0 && (
-          <div className="mt-12 rounded-2xl border border-stone-200 bg-white p-10 text-center">
+          <div className="card mt-12 p-10 text-center">
             <p className="font-bold text-stone-900">Ничего не найдено</p>
             <p className="mt-1 text-sm text-stone-500">
               Попробуйте изменить запрос или тип организации.

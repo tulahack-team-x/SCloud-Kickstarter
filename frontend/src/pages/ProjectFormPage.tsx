@@ -186,7 +186,7 @@ function ProjectEditor({
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-        <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+        <section className="card p-6">
           <h2 className="text-lg font-bold text-stone-950">Паспорт</h2>
 
           <div className="mt-5 space-y-5">
@@ -256,7 +256,7 @@ function ProjectEditor({
           </div>
         </section>
 
-        <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+        <section className="card p-6">
           <h2 className="text-lg font-bold text-stone-950">
             Гипотеза и результат
           </h2>
@@ -303,7 +303,7 @@ function ProjectEditor({
           </div>
         </section>
 
-        <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+        <section className="card p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-bold text-stone-950">Этапы</h2>
             <Button
