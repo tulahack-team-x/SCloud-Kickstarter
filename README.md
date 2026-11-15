@@ -19,6 +19,7 @@
 - Личные кабинеты под каждую роль (Заказчик, Спонсор, Научная организация)
 
 В каталоге examples - полное видео с демонстрацией ВСЕХ функций!
+https://github.com/tulahack-team-x/SCloud-Kickstarter/blob/main/examples/copy_76F70782-95C7-40E5-A3E7-89F2FA559A48.mov
 
 ## Стек
 
