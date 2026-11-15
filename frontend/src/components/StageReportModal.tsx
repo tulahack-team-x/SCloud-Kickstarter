@@ -10,6 +10,7 @@ import type {
 import Button from "./Button";
 import { TextareaField } from "./FormField";
 import Spinner from "./Spinner";
+import ReportAttachments from "./ReportAttachments";
 
 type StageReportModalProps = {
   orderId: string;
@@ -113,6 +114,8 @@ function StageReportModal({
         </p>
       </div>
 
+      <ReportAttachments orderId={orderId} ids={report.attachmentIds} />
+      {report.feedback && <p className="rounded-xl bg-amber-50 p-4 text-sm">Комментарий заказчика: {report.feedback}</p>}
       <div className="rounded-xl bg-stone-50 p-4">
         <p className="text-xs font-bold uppercase tracking-wide text-stone-500">
           Критерий приёмки

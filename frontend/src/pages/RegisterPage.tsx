@@ -83,6 +83,7 @@ function RegisterPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [members, setMembers] = useState<{ name: string; position: string }[]>([]);
 
   if (!loading && user) {
     return <Navigate to="/cabinet" replace />;
@@ -124,6 +125,7 @@ function RegisterPage() {
                 description: form.description.trim(),
                 skills: form.skills.trim() || undefined,
                 equipment: form.equipment.trim() || undefined,
+                members: members.map((member) => ({ name: member.name.trim(), position: member.position.trim() })),
               },
             }
           : {}),
@@ -340,6 +342,21 @@ function RegisterPage() {
             </div>
           )}
 
+          {isTeam && <div className="space-y-4">
+            <h2 className="text-lg font-bold">Состав команды</h2>
+            <p className="text-sm text-stone-500">Руководитель добавляется автоматически.</p>
+            {members.map((member, index) => <div key={index} className="grid gap-3 sm:grid-cols-2">
+              <FormField id={`member-${index}-name`} label={`Участник ${index + 1}: имя`}
+                value={member.name} required minLength={2} maxLength={100}
+                onChange={(event) => setMembers((items) => items.map((item, i) => i === index ? { ...item, name: event.target.value } : item))} />
+              <FormField id={`member-${index}-position`} label={`Участник ${index + 1}: должность`}
+                value={member.position} required minLength={2} maxLength={100}
+                onChange={(event) => setMembers((items) => items.map((item, i) => i === index ? { ...item, position: event.target.value } : item))} />
+              <Button type="button" variant="secondary" onClick={() => setMembers((items) => items.filter((_, i) => i !== index))}>Убрать участника {index + 1}</Button>
+            </div>)}
+            <Button type="button" variant="secondary" disabled={members.length >= 19}
+              onClick={() => setMembers((items) => [...items, { name: "", position: "" }])}>Добавить участника</Button>
+          </div>}
           {error && (
             <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}

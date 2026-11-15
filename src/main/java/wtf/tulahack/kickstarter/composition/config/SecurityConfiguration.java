@@ -27,7 +27,13 @@ public class SecurityConfiguration {
             throws Exception {
         http.authorizeHttpRequests(
                 access ->
-                        access.requestMatchers(
+                        access.dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ASYNC,
+                                        jakarta.servlet.DispatcherType.FORWARD).permitAll()
+                                .requestMatchers(HttpMethod.GET, "/assets/**", "/icons.svg",
+                                        "/login", "/register", "/cabinet", "/projects/**",
+                                        "/organizations", "/organizations/*", "/api/health")
+                                .permitAll()
+                                .requestMatchers(
                                         "/",
                                         "/index.html",
                                         "/app.js",

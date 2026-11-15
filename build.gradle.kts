@@ -39,3 +39,17 @@ tasks.withType<JavaCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.named<ProcessResources>("processResources") {
+    from(layout.projectDirectory.dir("frontend/dist")) {
+        into("static")
+    }
+}
+
+tasks.register<Copy>("deploymentDriver") {
+    from(configurations.runtimeClasspath) {
+        include("postgresql-*.jar")
+        rename { "postgresql.jar" }
+    }
+    into(layout.projectDirectory.dir("deploy/tools"))
+}

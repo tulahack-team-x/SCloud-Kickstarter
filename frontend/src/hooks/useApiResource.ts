@@ -1,46 +1,41 @@
 import { useEffect, useState } from "react";
 import { apiFetch, getApiErrorMessage } from "../lib/api";
 
+type Resource<T> = {
+  path: string | null;
+  revision: number;
+  data: T | null;
+  error: string | null;
+};
+
 export function useApiResource<T>(path: string | null) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [requestId, setRequestId] = useState(0);
+  const [revision, setRevision] = useState(0);
+  const [resource, setResource] = useState<Resource<T>>({
+    path: null, revision: -1, data: null, error: null,
+  });
 
   useEffect(() => {
     if (!path) return;
-
-    const requestPath = path;
     let cancelled = false;
-
-    async function load() {
-      try {
-        const result = await apiFetch<T>(requestPath);
-
+    apiFetch<T>(path).then(
+      (data) => {
+        if (!cancelled) setResource({ path, revision, data, error: null });
+      },
+      (error: unknown) => {
         if (!cancelled) {
-          setData(result);
-          setError(null);
+          setResource({ path, revision, data: null,
+            error: getApiErrorMessage(error, "Не удалось загрузить данные") });
         }
-      } catch (err) {
-        if (!cancelled) {
-          setError(getApiErrorMessage(err, "Не удалось загрузить данные"));
-        }
-      }
-    }
+      },
+    );
+    return () => { cancelled = true; };
+  }, [path, revision]);
 
-    void load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [path, requestId]);
-
-  function reload() {
-    setData(null);
-    setError(null);
-    setRequestId((current) => current + 1);
-  }
-
-  const loading = path !== null && data === null && error === null;
-
-  return { data, loading, error, reload };
+  const current = path !== null && resource.path === path && resource.revision === revision;
+  return {
+    data: current ? resource.data : null,
+    error: current ? resource.error : null,
+    loading: path !== null && (!current || resource.data === null && resource.error === null),
+    reload: () => setRevision((value) => value + 1),
+  };
 }

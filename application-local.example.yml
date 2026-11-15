@@ -1,0 +1,7 @@
+app:
+  recommendations:
+    url: http://127.0.0.1:8000
+    service-key: ""
+klinch:
+  api-key: ""
+  model: deepseek-v4-pro
