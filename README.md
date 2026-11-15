@@ -28,6 +28,7 @@
 - PostgreSQL
 - Caffeine
 - Gradle
+- Python FastAPI
 
 ## Возможности
 
@@ -97,5 +98,5 @@ bun run lint
 bun run build
 ```
 
-> (demo-проект, платежи тестовые, реальные деньги не списываются)
+> (demo-проект)
 
